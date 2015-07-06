@@ -1,0 +1,594 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="DLL_Debug|Win32">
+      <Configuration>DLL_Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="DLL_Debug|x64">
+      <Configuration>DLL_Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="LIB_Debug|Win32">
+      <Configuration>LIB_Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="LIB_Debug|x64">
+      <Configuration>LIB_Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="LIB_Release|Win32">
+      <Configuration>LIB_Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="LIB_Release|x64">
+      <Configuration>LIB_Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="DLL_Release|Win32">
+      <Configuration>DLL_Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="DLL_Release|x64">
+      <Configuration>DLL_Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>liblept-171</ProjectName>
+    <ProjectGuid>{1D7AB886-BECA-4A97-89CE-7381D3F5DE00}</ProjectGuid>
+    <RootNamespace>liblept</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\include\leptonica_versionnumbers.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\include\leptonica_versionnumbers.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\include\leptonica_versionnumbers.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\include\leptonica_versionnumbers.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\include\leptonica_versionnumbers.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\include\leptonica_versionnumbers.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\include\leptonica_versionnumbers.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\include\leptonica_versionnumbers.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>11.0.60610.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|Win32'">$(SolutionDir)build\lib\$(Platform)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|Win32'">$(SolutionDir)build\lib\$(Platform)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|Win32'">$(SolutionDir)build\obj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|Win32'">$(SolutionDir)build\obj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DLL_Release|Win32'">$(SolutionDir)build\lib\$(Platform)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='LIB_Release|Win32'">$(SolutionDir)build\lib\$(Platform)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DLL_Release|Win32'">$(SolutionDir)build\obj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='LIB_Release|Win32'">$(SolutionDir)build\obj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|x64'">$(SolutionDir)build\lib\$(Platform)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|x64'">$(SolutionDir)build\lib\$(Platform)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|x64'">$(SolutionDir)build\obj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|x64'">$(SolutionDir)build\obj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DLL_Release|x64'">$(SolutionDir)build\lib\$(Platform)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='LIB_Release|x64'">$(SolutionDir)build\lib\$(Platform)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DLL_Release|x64'">$(SolutionDir)build\obj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='LIB_Release|x64'">$(SolutionDir)build\obj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|Win32'">
+    <TargetName>liblept$(LIBLEPT_VERSION)d</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|Win32'">
+    <TargetName>liblept$(LIBLEPT_VERSION)-static-mtdll-debug</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Release|Win32'">
+    <TargetName>liblept$(LIBLEPT_VERSION)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Release|Win32'">
+    <TargetName>liblept$(LIBLEPT_VERSION)-static-mtdll</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|x64'">
+    <TargetName>liblept$(LIBLEPT_VERSION)d</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|x64'">
+    <TargetName>liblept$(LIBLEPT_VERSION)-static-mtdll-debug</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Release|x64'">
+    <TargetName>liblept$(LIBLEPT_VERSION)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Release|x64'">
+    <TargetName>liblept$(LIBLEPT_VERSION)-static-mtdll</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Release|Win32'">
+    <CustomBuildStep>
+      <Message />
+      <Command />
+    </CustomBuildStep>
+    <ClCompile>
+      <AdditionalOptions>/wd4244 /wd4305 /wd4018 /wd4267 /wd4996 %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>MaxSpeed</Optimization>
+      <AdditionalIncludeDirectories>.\include;..\giflib\include;..\zlib\include;..\libjpeg\include;..\libpng\include;..\libtiff\libtiff\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_USRDLL;_WINDLL;LIBLEPT_EXPORTS;L_LITTLE_ENDIAN;XMD_H;NO_CONSOLE_IO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>Default</CompileAs>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>zlib$(ZLIB_VERSION)-static-mtdll.lib;libpng$(LIBPNG_VERSION)-static-mtdll.lib;libjpeg$(LIBJPEG_VERSION)-static-mtdll.lib;libtiff$(LIBTIFF_VERSION)-static-mtdll.lib;giflib$(GIFLIB_VERSION)-static-mtdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <Version>$(LIBLEPT_NUMBER)</Version>
+      <LinkTimeCodeGeneration />
+      <TargetMachine>MachineX86</TargetMachine>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <AdditionalLibraryDirectories>$(LeptonicaDependenciesDirectory);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ImportLibrary>$(OutDir)\$(TargetName).lib</ImportLibrary>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Release|Win32'">
+    <CustomBuildStep>
+      <Message>
+      </Message>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+    <ClCompile>
+      <AdditionalOptions>/wd4244 /wd4305 /wd4018 /wd4267 /wd4996 %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>MaxSpeed</Optimization>
+      <AdditionalIncludeDirectories>.\include;..\giflib\include;..\zlib\include;..\libjpeg\include;..\libpng\include;..\libtiff\libtiff\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_USRDLL;_WINDLL;LIBLEPT_EXPORTS;L_LITTLE_ENDIAN;XMD_H;NO_CONSOLE_IO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>Default</CompileAs>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>zlib$(ZLIB_VERSION)-static-mtdll.lib;libpng$(LIBPNG_VERSION)-static-mtdll.lib;libjpeg$(LIBJPEG_VERSION)-static-mtdll.lib;libtiff$(LIBTIFF_VERSION)-static-mtdll.lib;giflib$(GIFLIB_VERSION)-static-mtdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <Version>$(LIBLEPT_NUMBER)</Version>
+      <LinkTimeCodeGeneration>
+      </LinkTimeCodeGeneration>
+      <TargetMachine>MachineX86</TargetMachine>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <AdditionalLibraryDirectories>$(LeptonicaDependenciesDirectory);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ImportLibrary>$(OutDir)\$(TargetName).lib</ImportLibrary>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Release|x64'">
+    <CustomBuildStep>
+      <Message>
+      </Message>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+    <ClCompile>
+      <AdditionalOptions>/wd4244 /wd4305 /wd4018 /wd4267 /wd4996 %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>MaxSpeed</Optimization>
+      <AdditionalIncludeDirectories>.\include;..\giflib\include;..\zlib\include;..\libjpeg\include;..\libpng\include;..\libtiff\libtiff\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_USRDLL;_WINDLL;LIBLEPT_EXPORTS;L_LITTLE_ENDIAN;XMD_H;NO_CONSOLE_IO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>Default</CompileAs>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>zlib$(ZLIB_VERSION)-static-mtdll.lib;libpng$(LIBPNG_VERSION)-static-mtdll.lib;libjpeg$(LIBJPEG_VERSION)-static-mtdll.lib;libtiff$(LIBTIFF_VERSION)-static-mtdll.lib;giflib$(GIFLIB_VERSION)-static-mtdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <Version>$(LIBLEPT_NUMBER)</Version>
+      <LinkTimeCodeGeneration>
+      </LinkTimeCodeGeneration>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <AdditionalLibraryDirectories>$(LeptonicaDependenciesDirectory);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ImportLibrary>$(OutDir)\$(TargetName).lib</ImportLibrary>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Release|x64'">
+    <CustomBuildStep>
+      <Message>
+      </Message>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+    <ClCompile>
+      <AdditionalOptions>/wd4244 /wd4305 /wd4018 /wd4267 /wd4996 %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>MaxSpeed</Optimization>
+      <AdditionalIncludeDirectories>.\include;..\giflib\include;..\zlib\include;..\libjpeg\include;..\libpng\include;..\libtiff\libtiff\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_USRDLL;_WINDLL;LIBLEPT_EXPORTS;L_LITTLE_ENDIAN;XMD_H;NO_CONSOLE_IO;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>Default</CompileAs>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>zlib$(ZLIB_VERSION)-static-mtdll.lib;libpng$(LIBPNG_VERSION)-static-mtdll.lib;libjpeg$(LIBJPEG_VERSION)-static-mtdll.lib;libtiff$(LIBTIFF_VERSION)-static-mtdll.lib;giflib$(GIFLIB_VERSION)-static-mtdll.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <Version>$(LIBLEPT_NUMBER)</Version>
+      <LinkTimeCodeGeneration>
+      </LinkTimeCodeGeneration>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+      <AdditionalLibraryDirectories>$(LeptonicaDependenciesDirectory);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ImportLibrary>$(OutDir)\$(TargetName).lib</ImportLibrary>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|Win32'">
+    <CustomBuildStep>
+      <Message />
+      <Command />
+    </CustomBuildStep>
+    <ClCompile>
+      <AdditionalOptions>/wd4244 /wd4305 /wd4018 /wd4267 /wd4996 %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>.\include;..\giflib\include;..\zlib\include;..\libjpeg\include;..\libpng\include;..\libtiff\libtiff\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_USRDLL;_WINDLL;LIBLEPT_EXPORTS;L_LITTLE_ENDIAN;XMD_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>Default</CompileAs>
+      <ShowIncludes>false</ShowIncludes>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>zlib$(ZLIB_VERSION)-static-mtdll-debug.lib;giflib$(GIFLIB_VERSION)-static-mtdll-debug.lib;libpng$(LIBPNG_VERSION)-static-mtdll-debug.lib;libjpeg$(LIBJPEG_VERSION)-static-mtdll-debug.lib;libtiff$(LIBTIFF_VERSION)-static-mtdll-debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <Version>$(LIBLEPT_NUMBER)</Version>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalLibraryDirectories>$(LeptonicaDependenciesDirectory);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ImportLibrary>$(OutDir)\$(TargetName).lib</ImportLibrary>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|Win32'">
+    <CustomBuildStep>
+      <Message>
+      </Message>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+    <ClCompile>
+      <AdditionalOptions>/wd4244 /wd4305 /wd4018 /wd4267 /wd4996 %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>.\include;..\giflib\include;..\zlib\include;..\libjpeg\include;..\libpng\include;..\libtiff\libtiff\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_USRDLL;_WINDLL;LIBLEPT_EXPORTS;L_LITTLE_ENDIAN;XMD_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>Default</CompileAs>
+      <ShowIncludes>false</ShowIncludes>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>zlib$(ZLIB_VERSION)-static-mtdll-debug.lib;giflib$(GIFLIB_VERSION)-static-mtdll-debug.lib;libpng$(LIBPNG_VERSION)-static-mtdll-debug.lib;libjpeg$(LIBJPEG_VERSION)-static-mtdll-debug.lib;libtiff$(LIBTIFF_VERSION)-static-mtdll-debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <Version>$(LIBLEPT_NUMBER)</Version>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalLibraryDirectories>$(LeptonicaDependenciesDirectory);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ImportLibrary>$(OutDir)\$(TargetName).lib</ImportLibrary>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|x64'">
+    <CustomBuildStep>
+      <Message>
+      </Message>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+    <ClCompile>
+      <AdditionalOptions>/wd4244 /wd4305 /wd4018 /wd4267 /wd4996 %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>.\include;..\giflib\include;..\zlib\include;..\libjpeg\include;..\libpng\include;..\libtiff\libtiff\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_USRDLL;_WINDLL;LIBLEPT_EXPORTS;L_LITTLE_ENDIAN;XMD_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>Default</CompileAs>
+      <ShowIncludes>false</ShowIncludes>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>zlib$(ZLIB_VERSION)-static-mtdll-debug.lib;giflib$(GIFLIB_VERSION)-static-mtdll-debug.lib;libpng$(LIBPNG_VERSION)-static-mtdll-debug.lib;libjpeg$(LIBJPEG_VERSION)-static-mtdll-debug.lib;libtiff$(LIBTIFF_VERSION)-static-mtdll-debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <Version>$(LIBLEPT_NUMBER)</Version>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(LeptonicaDependenciesDirectory);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ImportLibrary>$(OutDir)\$(TargetName).lib</ImportLibrary>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|x64'">
+    <CustomBuildStep>
+      <Message>
+      </Message>
+      <Command>
+      </Command>
+    </CustomBuildStep>
+    <ClCompile>
+      <AdditionalOptions>/wd4244 /wd4305 /wd4018 /wd4267 /wd4996 %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>.\include;..\giflib\include;..\zlib\include;..\libjpeg\include;..\libpng\include;..\libtiff\libtiff\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_USRDLL;_WINDLL;LIBLEPT_EXPORTS;L_LITTLE_ENDIAN;XMD_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>Default</CompileAs>
+      <ShowIncludes>false</ShowIncludes>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>zlib$(ZLIB_VERSION)-static-mtdll-debug.lib;giflib$(GIFLIB_VERSION)-static-mtdll-debug.lib;libpng$(LIBPNG_VERSION)-static-mtdll-debug.lib;libjpeg$(LIBJPEG_VERSION)-static-mtdll-debug.lib;libtiff$(LIBTIFF_VERSION)-static-mtdll-debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <Version>$(LIBLEPT_NUMBER)</Version>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(LeptonicaDependenciesDirectory);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ImportLibrary>$(OutDir)\$(TargetName).lib</ImportLibrary>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\adaptmap.c" />
+    <ClCompile Include="src\affine.c" />
+    <ClCompile Include="src\affinecompose.c" />
+    <ClCompile Include="src\arrayaccess.c" />
+    <ClCompile Include="src\bardecode.c" />
+    <ClCompile Include="src\baseline.c" />
+    <ClCompile Include="src\bbuffer.c" />
+    <ClCompile Include="src\bilateral.c" />
+    <ClCompile Include="src\bilinear.c" />
+    <ClCompile Include="src\binarize.c" />
+    <ClCompile Include="src\binexpand.c" />
+    <ClCompile Include="src\binreduce.c" />
+    <ClCompile Include="src\blend.c" />
+    <ClCompile Include="src\bmf.c" />
+    <ClCompile Include="src\bmpio.c" />
+    <ClCompile Include="src\bmpiostub.c" />
+    <ClCompile Include="src\boxbasic.c" />
+    <ClCompile Include="src\boxfunc1.c" />
+    <ClCompile Include="src\boxfunc2.c" />
+    <ClCompile Include="src\boxfunc3.c" />
+    <ClCompile Include="src\boxfunc4.c" />
+    <ClCompile Include="src\bytearray.c" />
+    <ClCompile Include="src\ccbord.c" />
+    <ClCompile Include="src\ccthin.c" />
+    <ClCompile Include="src\classapp.c" />
+    <ClCompile Include="src\colorcontent.c" />
+    <ClCompile Include="src\coloring.c" />
+    <ClCompile Include="src\colormap.c" />
+    <ClCompile Include="src\colormorph.c" />
+    <ClCompile Include="src\colorquant1.c" />
+    <ClCompile Include="src\colorquant2.c" />
+    <ClCompile Include="src\colorseg.c" />
+    <ClCompile Include="src\colorspace.c" />
+    <ClCompile Include="src\compare.c" />
+    <ClCompile Include="src\conncomp.c" />
+    <ClCompile Include="src\convertfiles.c" />
+    <ClCompile Include="src\convolve.c" />
+    <ClCompile Include="src\convolvelow.c" />
+    <ClCompile Include="src\correlscore.c" />
+    <ClCompile Include="src\dewarp1.c" />
+    <ClCompile Include="src\dewarp2.c" />
+    <ClCompile Include="src\dewarp3.c" />
+    <ClCompile Include="src\dewarp4.c" />
+    <ClCompile Include="src\dnabasic.c" />
+    <ClCompile Include="src\dwacomb.2.c" />
+    <ClCompile Include="src\dwacomblow.2.c" />
+    <ClCompile Include="src\edge.c" />
+    <ClCompile Include="src\enhance.c" />
+    <ClCompile Include="src\fhmtauto.c" />
+    <ClCompile Include="src\fhmtgen.1.c" />
+    <ClCompile Include="src\fhmtgenlow.1.c" />
+    <ClCompile Include="src\finditalic.c" />
+    <ClCompile Include="src\flipdetect.c" />
+    <ClCompile Include="src\fliphmtgen.c" />
+    <ClCompile Include="src\fmorphauto.c" />
+    <ClCompile Include="src\fmorphgen.1.c" />
+    <ClCompile Include="src\fmorphgenlow.1.c" />
+    <ClCompile Include="src\fpix1.c" />
+    <ClCompile Include="src\fpix2.c" />
+    <ClCompile Include="src\gifio.c" />
+    <ClCompile Include="src\gifiostub.c" />
+    <ClCompile Include="src\gplot.c" />
+    <ClCompile Include="src\graphics.c" />
+    <ClCompile Include="src\graymorph.c" />
+    <ClCompile Include="src\graymorphlow.c" />
+    <ClCompile Include="src\grayquant.c" />
+    <ClCompile Include="src\grayquantlow.c" />
+    <ClCompile Include="src\heap.c" />
+    <ClCompile Include="src\jbclass.c" />
+    <ClCompile Include="src\jp2kheader.c" />
+    <ClCompile Include="src\jp2kheaderstub.c" />
+    <ClCompile Include="src\jp2kio.c" />
+    <ClCompile Include="src\jp2kiostub.c" />
+    <ClCompile Include="src\jpegio.c" />
+    <ClCompile Include="src\jpegiostub.c" />
+    <ClCompile Include="src\kernel.c" />
+    <ClCompile Include="src\leptwin.c" />
+    <ClCompile Include="src\libversions.c" />
+    <ClCompile Include="src\list.c" />
+    <ClCompile Include="src\maze.c" />
+    <ClCompile Include="src\morph.c" />
+    <ClCompile Include="src\morphapp.c" />
+    <ClCompile Include="src\morphdwa.c" />
+    <ClCompile Include="src\morphseq.c" />
+    <ClCompile Include="src\numabasic.c" />
+    <ClCompile Include="src\numafunc1.c" />
+    <ClCompile Include="src\numafunc2.c" />
+    <ClCompile Include="src\pageseg.c" />
+    <ClCompile Include="src\paintcmap.c" />
+    <ClCompile Include="src\parseprotos.c" />
+    <ClCompile Include="src\partition.c" />
+    <ClCompile Include="src\pdfio1.c" />
+    <ClCompile Include="src\pdfio1stub.c" />
+    <ClCompile Include="src\pdfio2.c" />
+    <ClCompile Include="src\pdfio2stub.c" />
+    <ClCompile Include="src\pix1.c" />
+    <ClCompile Include="src\pix2.c" />
+    <ClCompile Include="src\pix3.c" />
+    <ClCompile Include="src\pix4.c" />
+    <ClCompile Include="src\pix5.c" />
+    <ClCompile Include="src\pixabasic.c" />
+    <ClCompile Include="src\pixacc.c" />
+    <ClCompile Include="src\pixafunc1.c" />
+    <ClCompile Include="src\pixafunc2.c" />
+    <ClCompile Include="src\pixalloc.c" />
+    <ClCompile Include="src\pixarith.c" />
+    <ClCompile Include="src\pixcomp.c" />
+    <ClCompile Include="src\pixconv.c" />
+    <ClCompile Include="src\pixlabel.c" />
+    <ClCompile Include="src\pixtiling.c" />
+    <ClCompile Include="src\pngio.c" />
+    <ClCompile Include="src\pngiostub.c" />
+    <ClCompile Include="src\pnmio.c" />
+    <ClCompile Include="src\pnmiostub.c" />
+    <ClCompile Include="src\projective.c" />
+    <ClCompile Include="src\psio1.c" />
+    <ClCompile Include="src\psio1stub.c" />
+    <ClCompile Include="src\psio2.c" />
+    <ClCompile Include="src\psio2stub.c" />
+    <ClCompile Include="src\ptabasic.c" />
+    <ClCompile Include="src\ptafunc1.c" />
+    <ClCompile Include="src\ptra.c" />
+    <ClCompile Include="src\quadtree.c" />
+    <ClCompile Include="src\queue.c" />
+    <ClCompile Include="src\rank.c" />
+    <ClCompile Include="src\readbarcode.c" />
+    <ClCompile Include="src\readfile.c" />
+    <ClCompile Include="src\recogbasic.c" />
+    <ClCompile Include="src\recogdid.c" />
+    <ClCompile Include="src\recogident.c" />
+    <ClCompile Include="src\recogtrain.c" />
+    <ClCompile Include="src\regutils.c" />
+    <ClCompile Include="src\rop.c" />
+    <ClCompile Include="src\ropiplow.c" />
+    <ClCompile Include="src\roplow.c" />
+    <ClCompile Include="src\rotate.c" />
+    <ClCompile Include="src\rotateam.c" />
+    <ClCompile Include="src\rotateamlow.c" />
+    <ClCompile Include="src\rotateorth.c" />
+    <ClCompile Include="src\rotateshear.c" />
+    <ClCompile Include="src\runlength.c" />
+    <ClCompile Include="src\sarray.c" />
+    <ClCompile Include="src\scale.c" />
+    <ClCompile Include="src\scalelow.c" />
+    <ClCompile Include="src\seedfill.c" />
+    <ClCompile Include="src\seedfilllow.c" />
+    <ClCompile Include="src\sel1.c" />
+    <ClCompile Include="src\sel2.c" />
+    <ClCompile Include="src\selgen.c" />
+    <ClCompile Include="src\shear.c" />
+    <ClCompile Include="src\skew.c" />
+    <ClCompile Include="src\spixio.c" />
+    <ClCompile Include="src\stack.c" />
+    <ClCompile Include="src\sudoku.c" />
+    <ClCompile Include="src\textops.c" />
+    <ClCompile Include="src\tiffio.c" />
+    <ClCompile Include="src\tiffiostub.c" />
+    <ClCompile Include="src\utils.c" />
+    <ClCompile Include="src\viewfiles.c" />
+    <ClCompile Include="src\warper.c" />
+    <ClCompile Include="src\watershed.c" />
+    <ClCompile Include="src\webpio.c" />
+    <ClCompile Include="src\webpiostub.c" />
+    <ClCompile Include="src\writefile.c" />
+    <ClCompile Include="src\xtractprotos.c" />
+    <ClCompile Include="src\zlibmem.c" />
+    <ClCompile Include="src\zlibmemstub.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\allheaders.h" />
+    <ClInclude Include="include\alltypes.h" />
+    <ClInclude Include="include\array.h" />
+    <ClInclude Include="include\arrayaccess.h" />
+    <ClInclude Include="include\bbuffer.h" />
+    <ClInclude Include="include\bilateral.h" />
+    <ClInclude Include="include\bmf.h" />
+    <ClInclude Include="include\bmp.h" />
+    <ClInclude Include="include\ccbord.h" />
+    <ClInclude Include="include\dewarp.h" />
+    <ClInclude Include="include\endianness.h" />
+    <ClInclude Include="include\environ.h" />
+    <ClInclude Include="include\gplot.h" />
+    <ClInclude Include="include\heap.h" />
+    <ClInclude Include="include\imageio.h" />
+    <ClInclude Include="include\jbclass.h" />
+    <ClInclude Include="include\leptwin.h" />
+    <ClInclude Include="include\list.h" />
+    <ClInclude Include="include\morph.h" />
+    <ClInclude Include="include\pix.h" />
+    <ClInclude Include="include\ptra.h" />
+    <ClInclude Include="include\queue.h" />
+    <ClInclude Include="include\readbarcode.h" />
+    <ClInclude Include="include\recog.h" />
+    <ClInclude Include="include\regutils.h" />
+    <ClInclude Include="include\stack.h" />
+    <ClInclude Include="include\sudoku.h" />
+    <ClInclude Include="include\watershed.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

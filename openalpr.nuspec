@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>OpenALPR.$PlatformToolset$.$Platform$.$Configuration$</id>
+    <title>OpenALPR</title>
+    <version>$version$</version>
+    <authors>OpenALPR Technology, Inc.</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+	<description>
+		OpenALPR is an open source Automatic License Plate Recognition library written in C++ with bindings in C#, Java, and Python. 
+		The library analyzes images and video streams to identify license plates. 
+		The output is the text representation of any license plate characters.
+	</description>
+	<licenseUrl>https://github.com/openalpr/openalpr/blob/master/LICENSE</licenseUrl>
+	<projectUrl>https://github.com/openalpr/openalpr</projectUrl>
+  </metadata>
+  <files>
+
+	<!-- dependencies -->
+    <file src="$DistDir$\openalpr-net.dll" target="lib\net40\openalpr-net.dll"  />
+    <file src="$DistDir$\opencv**.dll" target="build\native\windows\$Platform$" />	
+	<file src="$DistDir$\openalpr-utils**.exe" target="build\native\windows\$Platform$" />
+    <file src="$DistDir$\liblept**.dll" target="build\native\windows\$Platform$"  />
+    <file src="$DistDir$\liblept**.dll" target="build\native\windows\$Platform$"  />
+
+	<!-- runtime data -->
+    <file src="$DistDir$\openalpr.conf" target="build\openalpr.conf"  />
+    <file src="$DistDir$\runtime_data\**\*.*" target="build\native\windows\$Platform$\runtime_data" />	
+
+	<!-- visual studio -->
+    <file src="openalpr.targets" target="build\openalpr.$Platform$.targets"  />
+ 		
+  </files>
+</package>

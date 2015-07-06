@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="OpenALPRCommonCopyBinaries" BeforeTargets="AfterBuild">
+    <ItemGroup>
+      <OpenALPRBinaries Include="$(MSBuildThisFileDirectory)\native\windows\$(Platform)\$(Configuration)\**\*.*" />
+      <OpenALPRConfig Include="$(MSBuildThisFileDirectory)\openalpr.conf" />
+    </ItemGroup>
+    <Message Importance="high" Text="-- OpenALPR.x64.targets: Copying files from $(MSBuildThisFileDirectory)\native\windows\$(Platform)\$(Configuration) to $(TargetDir)" />
+    <Copy SourceFiles="@(OpenALPRBinaries)" DestinationFiles="$(TargetDir)\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Copy SourceFiles="@(OpenALPRConfig)" DestinationFolder="$(TargetDir)" />
+  </Target>
+ </Project>

@@ -1,0 +1,8 @@
+[submodule "opencv"]
+	path = opencv
+	url = https://github.com/Itseez/opencv.git
+	ignore = dirty
+[submodule "tesseract-ocr/src"]
+	path = tesseract-ocr/src
+	url = https://github.com/tesseract-ocr/tesseract.git
+	ignore = dirty

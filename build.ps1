@@ -20,6 +20,9 @@ param(
     [string] $Clean = $false
 )
 
+# Utilities
+$MsbuildExe = Join-Path (${Env:ProgramFiles(x86)}) MSBuild\$ToolsVersion\Bin\msbuild.exe
+
 # IO
 $WorkingDir = Split-Path -parent $MyInvocation.MyCommand.Definition
 $OutputDir = Join-Path $WorkingDir "build\artifacts\$OpenALPRVersion\$PlatformToolset\$Configuration\$Platform"
@@ -138,9 +141,9 @@ function Requires-Cmake {
 
 function Requires-Msbuild 
 {
-    if ((Get-Command "msbuild.exe" -ErrorAction SilentlyContinue) -eq $null) {
-        Die "Missing msbuild.exe"
-    }
+	if(-not (Test-Path $MsbuildExe)) {
+		Die "Msbuild: Unable to find $MsbuildExe"
+	}
 }
 
 function Requires-Nuget 
@@ -353,7 +356,7 @@ function Msbuild
     Vcxproj-Nuke $Project "/rs:Project/rs:ItemDefinitionGroup/rs:PostBuildEvent"
     Vcxproj-Set $Project  "/rs:Project/@ToolsVersion" $ToolsVersion
 
-    Start-Process "msbuild.exe" $Arguments
+    Start-Process $MsbuildExe $Arguments
 
 }
 

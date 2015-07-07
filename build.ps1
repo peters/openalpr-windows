@@ -101,7 +101,7 @@ function Invoke-BatchFile
         [Parameter(Position = 0, Mandatory = $true, ValueFromPipeline = $true)]
         [string]$Path, 
         [Parameter(Position = 1, Mandatory = $true, ValueFromPipeline = $true)]
-    [string]$Parameters
+		[string]$Parameters
     )
 
     $tempFile = [IO.Path]::GetTempFileName()
@@ -323,8 +323,6 @@ function Msbuild
     Write-Diagnostic "Msbuild: OutDir - $OutDir"
     Write-Diagnostic "Msbuild: Matrix - $Configuration, $Platform, $PlatformToolset"
     
-    Requires-Msbuild
-
     $PreferredToolArchitecture = "Win32"
     if($Platform -eq "x64") {
         $PreferredToolArchitecture = "AMD64"
@@ -441,7 +439,6 @@ function Set-AssemblyVersion {
 
 function Build-Tesseract
 {
-    
     Write-Diagnostic "Tesseract: $Configuration, $Platform, $PlatformToolset"
 
     $ProjectsPath = Join-Path $WorkingDir tesseract-ocr\dependencies
@@ -491,9 +488,7 @@ function Build-OpenCV
 {
 
     Write-Diagnostic "OpenCV: $Configuration, $Platform, $PlatformToolset"
-    
-    Requires-Cmake
-    
+        
     if(Test-Path $OpenCVOutputDir) {
         Write-Output "OpenCV: Already built, skipping."
         return
@@ -531,8 +526,6 @@ function Build-OpenCV
 function Build-OpenALPR 
 {
     Write-Diagnostic "OpenALPR: $Configuration, $Platform, $PlatformToolset"
-
-    Requires-Cmake
     
     if(Test-Path $OpenALPROutputDir) {
         Write-Output "OpenALPR: Already built, skipping."
@@ -614,8 +607,6 @@ function Build-OpenALPRNet
 
     function Nupkg 
     {		
-        Requires-Nuget
-
         $NuspecFile = Join-Path $WorkingDir openalpr.nuspec
 
         $NupkgProperties = @(
@@ -680,17 +671,24 @@ $BuildTime = $StopWatch::StartNew()
 
 switch($Target) 
 {
-    "Build" {			
+    "Build" {		
+		
+		Requires-Cmake
+		Requires-Msbuild
+		Requires-Cmake
+			
         if($Clean -eq $true) {
             Remove-Item -Recurse -Force $OutputDir | Out-Null 
             Remove-Item -Recurse -Force $DistDir | Out-Null
         }
+
         Set-PlatformToolset
 
         Build-Tesseract
         Build-OpenCV
         Build-OpenALPR
         Build-OpenALPRNet
+
     }
 }
 

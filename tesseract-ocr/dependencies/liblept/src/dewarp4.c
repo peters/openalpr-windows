@@ -67,9 +67,9 @@ static const l_int32     GRAYIN_VALUE = 200;
  *  dewarpSinglePage()
  *
  *      Input:  pixs (with text, any depth)
- *              thresh (for global thresholding to 1 bpp; ignored otherwise)
+ *              thresh (for binarization)
  *              adaptive (1 for adaptive thresholding; 0 for global threshold)
- *              use_both (1 for horizontal and vertical; 0 for vertical only)
+ *              both (1 for horizontal and vertical; 0 for vertical only)
  *              &pixd (<return> dewarped result)
  *              &dewa (<optional return> dewa with single page; NULL to skip)
  *              debug (1 for debugging output, 0 otherwise)
@@ -85,7 +85,7 @@ l_int32
 dewarpSinglePage(PIX         *pixs,
                  l_int32      thresh,
                  l_int32      adaptive,
-                 l_int32      use_both,
+                 l_int32      both,
                  PIX        **ppixd,
                  L_DEWARPA  **pdewa,
                  l_int32      debug)
@@ -94,7 +94,7 @@ const char  *debugfile;
 l_int32      vsuccess, ret;
 L_DEWARP    *dew;
 L_DEWARPA   *dewa;
-PIX         *pix1, *pixb;
+PIX         *pix1, *pix2, *pixb;
 
     PROCNAME("dewarpSinglePage");
 
@@ -106,25 +106,26 @@ PIX         *pix1, *pixb;
         return ERROR_INT("pixs not defined", procName, 1);
 
     dewa = dewarpaCreate(1, 0, 1, 0, -1);
-    dewarpaUseBothArrays(dewa, use_both);
+    dewarpaUseBothArrays(dewa, both);
 
          /* Generate a binary image, if necessary */
     if (pixGetDepth(pixs) > 1) {
         pix1 = pixConvertTo8(pixs, 0);
         if (adaptive)
-            pixb = pixAdaptThresholdToBinary(pix1, NULL, 1.0);
+            pix2 = pixBackgroundNormSimple(pix1, NULL, NULL);
         else
-            pixb = pixThresholdToBinary(pix1, thresh);
+            pix2 = pixClone(pix1);
+        pixb = pixThresholdToBinary(pix2, thresh);
         pixDestroy(&pix1);
+        pixDestroy(&pix2);
     } else {
         pixb = pixClone(pixs);
     }
 
         /* Generate the page model */
-    lept_mkdir("lept");
     dew = dewarpCreate(pixb, 0);
     dewarpaInsertDewarp(dewa, dew);
-    debugfile = (debug) ? "/tmp/lept/singlepage_model.pdf" : NULL;
+    debugfile = (debug) ? "/tmp/dewarp_model.pdf" : NULL;
     dewarpBuildPageModel(dew, debugfile);
     dewarpaModelStatus(dewa, 0, &vsuccess, NULL);
     if (vsuccess == 0) {
@@ -136,7 +137,7 @@ PIX         *pix1, *pixb;
     }
 
         /* Apply the page model */
-    debugfile = (debug) ? "/tmp/lept/singlepage_apply.pdf" : NULL;
+    debugfile = (debug) ? "/tmp/dewarp_apply.pdf" : NULL;
     ret = dewarpaApplyDisparity(dewa, 0, pixs, 255, 0, 0, ppixd, debugfile);
     if (ret)
         L_ERROR("invalid model; failure to apply disparity\n", procName);
@@ -256,12 +257,6 @@ L_DEWARP  *dew;
                     L_INFO("page %d: abs diff curv %d > max_diff_linecurv\n",
                                 procName, i, diffcurv);
                 if (dew->hsuccess) {
-                    if (L_ABS(dew->leftslope) > dewa->max_edgeslope)
-                        L_INFO("page %d: abs left slope %d > max_edgeslope\n",
-                                    procName, i, dew->leftslope);
-                    if (L_ABS(dew->rightslope) > dewa->max_edgeslope)
-                        L_INFO("page %d: abs right slope %d > max_edgeslope\n",
-                                    procName, i, dew->rightslope);
                     diffedge = L_ABS(dew->leftcurv - dew->rightcurv);
                     if (L_ABS(dew->leftcurv) > dewa->max_edgecurv)
                         L_INFO("page %d: left curvature %d > max_edgecurv\n",
@@ -719,9 +714,7 @@ l_int32  maxcurv, diffcurv, diffedge;
         /* If a horizontal (edge) model exists, test for validity. */
     if (dew->hsuccess) {
         diffedge = L_ABS(dew->leftcurv - dew->rightcurv);
-        if (L_ABS(dew->leftslope) <= dewa->max_edgeslope &&
-            L_ABS(dew->rightslope) <= dewa->max_edgeslope &&
-            L_ABS(dew->leftcurv) <= dewa->max_edgecurv &&
+        if (L_ABS(dew->leftcurv) <= dewa->max_edgecurv &&
             L_ABS(dew->rightcurv) <= dewa->max_edgecurv &&
             diffedge <= dewa->max_diff_edgecurv) {
             dew->hvalid = 1;
@@ -741,7 +734,6 @@ l_int32  maxcurv, diffcurv, diffedge;
  *              scalefact (on contour images; typ. 0.5)
  *              first (first page model to render)
  *              last (last page model to render; use 0 to go to end)
- *              fontdir (for text bitmap fonts)
  *      Return: 0 if OK, 1 on error
  *
  *  Notes:
@@ -749,11 +741,10 @@ l_int32  maxcurv, diffcurv, diffedge;
  *      (2) This only shows actual models; not ref models
  */
 l_int32
-dewarpaShowArrays(L_DEWARPA   *dewa,
-                  l_float32    scalefact,
-                  l_int32      first,
-                  l_int32      last,
-                  const char  *fontdir)
+dewarpaShowArrays(L_DEWARPA  *dewa,
+                  l_float32   scalefact,
+                  l_int32     first,
+                  l_int32     last)
 {
 char       buf[256];
 char      *pathname;
@@ -773,11 +764,10 @@ PIXA      *pixa;
     if (last < first)
         return ERROR_INT("last < first", procName, 1);
 
-    lept_rmdir("lept");
-    lept_mkdir("lept");
-    if ((bmf = bmfCreate(fontdir, 8)) == NULL)
-              L_ERROR("bmf not made; page info not displayed", procName);
+    lept_rmdir("dewarparrays");
+    lept_mkdir("dewarparrays");
 
+    bmf = bmfCreate("./fonts", 8);
     fprintf(stderr, "Generating contour plots\n");
     for (i = first; i <= last; i++) {
         if (i && ((i % 10) == 0))
@@ -815,7 +805,7 @@ PIXA      *pixa;
         pixd = pixAddSingleTextblock(pixt, bmf, buf, 0x0000ff00,
                                      L_ADD_BELOW, NULL);
         snprintf(buf, sizeof(buf), "arrays_%04d.png", i);
-        pathname = genPathname("/tmp/lept", buf);
+        pathname = genPathname("/tmp/dewarparrays", buf);
         pixWrite(pathname, pixd, IFF_PNG);
         pixaDestroy(&pixa);
         pixDestroy(&pixt);
@@ -826,9 +816,9 @@ PIXA      *pixa;
     fprintf(stderr, "\n");
 
     fprintf(stderr, "Generating pdf of contour plots\n");
-    convertFilesToPdf("/tmp/lept", "arrays_", 90, 1.0, L_FLATE_ENCODE,
-                      0, "Disparity arrays", "/tmp/lept/disparity_arrays.pdf");
-    fprintf(stderr, "Output written to: /tmp/lept/disparity_arrays.pdf\n");
+    convertFilesToPdf("/tmp/dewarparrays", NULL, 90, 1.0, L_FLATE_ENCODE,
+                      0, "Disparity arrays", "/tmp/disparity_arrays.pdf");
+    fprintf(stderr, "Output written to: /tmp/disparity_arrays.pdf\n");
     return 0;
 }
 
@@ -920,7 +910,6 @@ PIX     *pixv, *pixh;
  *              sarray (of indexed input images)
  *              boxa (crop boxes for input images; can be null)
  *              firstpage, lastpage
- *              fontdir (for text bitmap fonts)
  *              pdfout (filename)
  *      Return: 0 if OK, 1 on error
  *
@@ -938,11 +927,9 @@ dewarpShowResults(L_DEWARPA   *dewa,
                   BOXA        *boxa,
                   l_int32      firstpage,
                   l_int32      lastpage,
-                  const char  *fontdir,
                   const char  *pdfout)
 {
 char       bufstr[256];
-char      *outpath;
 l_int32    i, modelpage;
 L_BMF     *bmf;
 BOX       *box;
@@ -961,12 +948,10 @@ PIXA      *pixa;
     if (firstpage > lastpage)
         return ERROR_INT("invalid first/last page numbers", procName, 1);
 
+    fprintf(stderr, "Dewarping and generating s/by/s view\n");
+    bmf = bmfCreate("./fonts", 6);
     lept_rmdir("dewarp_pdfout");
     lept_mkdir("dewarp_pdfout");
-    if ((bmf = bmfCreate(fontdir, 6)) == NULL)
-        L_ERROR("bmf not made; page info not displayed", procName);
-
-    fprintf(stderr, "Dewarping and generating s/by/s view\n");
     for (i = firstpage; i <= lastpage; i++) {
         if (i && (i % 10 == 0)) fprintf(stderr, ".. %d ", i);
         pixs = pixReadIndexed(sa, i);
@@ -1010,9 +995,7 @@ PIXA      *pixa;
     fprintf(stderr, "Generating pdf of result\n");
     convertFilesToPdf("/tmp/dewarp_pdfout", NULL, 100, 1.0, L_JPEG_ENCODE,
                       0, "Dewarp sequence", pdfout);
-    outpath = genPathname(pdfout, NULL);
-    fprintf(stderr, "Output written to: %s\n", outpath);
-    FREE(outpath);
+    fprintf(stderr, "Output written to: %s\n", pdfout);
     bmfDestroy(&bmf);
     return 0;
 }

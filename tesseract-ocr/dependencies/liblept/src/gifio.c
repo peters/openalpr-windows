@@ -38,24 +38,18 @@
  *          PIX        *pixReadMemGif()
  *          l_int32     pixWriteMemGif()
  *
+ *    This uses the gif library, version 4.1.6 or later.
+ *    Do not use 4.1.4.  It has serious problems handling 1 bpp images.
+ *
  *    The initial version of this module was generously contribued by
  *    Antony Dovgal.  He can be contacted at:  tony *AT* daylessday.org
  *
- *    Important version information:
- *
- *    (1) This uses the gif library, version 4.1.6 or later.
- *        Do not use 4.1.4.  It has serious problems handling 1 bpp images.
- *
- *    (2) There are some issues with version 5.0:
- *        - valgrind detects uninitialized values used used for writing
- *          and conditionally jumping in EGifPutScreenDesc().
- *        - DGifSlurp() crashes on some images, apparently triggered by
- *          by some GIF extension records.  The latter problem has been
- *          reported but not resolved as of October 2013.
- *
- *    (3) E. Raymond has been changing the high-level interface with 5.0
- *        and 5.1, and to keep up we have used macros determined by the
- *        major and minor version numbers.
+ *    There are some issues with version 5:
+ *    - valgrind detects uninitialized values used used for writing
+ *      and conditionally jumping in EGifPutScreenDesc().
+ *    - DGifSlurp() crashes on some images, apparently triggered by
+ *      by some GIF extension records.  The latter problem has been
+ *      reported but not resolved as of October 2013.
  */
 
 #include <string.h>
@@ -90,12 +84,6 @@ static const l_int32 InterlacedJumps[] = {8, 8, 4, 2};
 #define EGifOpenFileHandle(a,b)  EGifOpenFileHandle(a)
 #endif  /* GIFLIB_MAJOR */
 
-    /* Basic interface changed again in 5.1 (!) */
-#if GIFLIB_MAJOR < 5 || (GIFLIB_MAJOR == 5 && GIFLIB_MINOR == 0)
-#define DGifCloseFile(a,b)       DGifCloseFile(a)
-#define EGifCloseFile(a,b)       EGifCloseFile(a)
-#endif
-
 /*---------------------------------------------------------------------*
  *                       Reading gif from file                         *
  *---------------------------------------------------------------------*/
@@ -116,7 +104,6 @@ PIX             *pixd, *pixdi;
 PIXCMAP         *cmap;
 ColorMapObject  *gif_cmap;
 SavedImage       si;
-int              giferr;
 
     PROCNAME("pixReadStreamGif");
 
@@ -134,12 +121,12 @@ int              giferr;
 
         /* Read all the data, but use only the first image found */
     if (DGifSlurp(gif) != GIF_OK) {
-        DGifCloseFile(gif, &giferr);
+        DGifCloseFile(gif);
         return (PIX *)ERROR_PTR("failed to read GIF data", procName, NULL);
     }
 
     if (gif->SavedImages == NULL) {
-        DGifCloseFile(gif, &giferr);
+        DGifCloseFile(gif);
         return (PIX *)ERROR_PTR("no images found in GIF", procName, NULL);
     }
 
@@ -147,12 +134,12 @@ int              giferr;
     w = si.ImageDesc.Width;
     h = si.ImageDesc.Height;
     if (w <= 0 || h <= 0) {
-        DGifCloseFile(gif, &giferr);
+        DGifCloseFile(gif);
         return (PIX *)ERROR_PTR("invalid image dimensions", procName, NULL);
     }
 
     if (si.RasterBits == NULL) {
-        DGifCloseFile(gif, &giferr);
+        DGifCloseFile(gif);
         return (PIX *)ERROR_PTR("no raster data in GIF", procName, NULL);
     }
 
@@ -164,7 +151,7 @@ int              giferr;
         gif_cmap = gif->SColorMap;
     } else {
             /* don't know where to take cmap from */
-        DGifCloseFile(gif, &giferr);
+        DGifCloseFile(gif);
         return (PIX *)ERROR_PTR("color map is missing", procName, NULL);
     }
 
@@ -188,7 +175,7 @@ int              giferr;
     }
 
     if ((pixd = pixCreate(w, h, d)) == NULL) {
-        DGifCloseFile(gif, &giferr);
+        DGifCloseFile(gif);
         pixcmapDestroy(&cmap);
         return (PIX *)ERROR_PTR("failed to allocate pixd", procName, NULL);
     }
@@ -220,7 +207,7 @@ int              giferr;
         pixTransferAllData(pixd, &pixdi, 0, 0);
     }
 
-    DGifCloseFile(gif, &giferr);
+    DGifCloseFile(gif);
     return pixd;
 }
 
@@ -287,7 +274,6 @@ PIXCMAP         *cmap;
 GifFileType     *gif;
 ColorMapObject  *gif_cmap;
 GifByteType     *gif_line;
-int              giferr;
 
     PROCNAME("pixWriteStreamGif");
 
@@ -370,14 +356,14 @@ int              giferr;
         != GIF_OK) {
         pixDestroy(&pixd);
         GifFreeMapObject(gif_cmap);
-        EGifCloseFile(gif, &giferr);
+        EGifCloseFile(gif);
         return ERROR_INT("failed to write screen description", procName, 1);
     }
     GifFreeMapObject(gif_cmap); /* not needed after this point */
 
     if (EGifPutImageDesc(gif, 0, 0, w, h, FALSE, NULL) != GIF_OK) {
         pixDestroy(&pixd);
-        EGifCloseFile(gif, &giferr);
+        EGifCloseFile(gif);
         return ERROR_INT("failed to image screen description", procName, 1);
     }
 
@@ -385,13 +371,13 @@ int              giferr;
     wpl = pixGetWpl(pixd);
     if (d != 1 && d != 2 && d != 4 && d != 8) {
         pixDestroy(&pixd);
-        EGifCloseFile(gif, &giferr);
+        EGifCloseFile(gif);
         return ERROR_INT("image depth is not in {1, 2, 4, 8}", procName, 1);
     }
 
     if ((gif_line = (GifByteType *)CALLOC(sizeof(GifByteType), w)) == NULL) {
         pixDestroy(&pixd);
-        EGifCloseFile(gif, &giferr);
+        EGifCloseFile(gif);
         return ERROR_INT("mem alloc fail for data line", procName, 1);
     }
 
@@ -420,7 +406,7 @@ int              giferr;
         if (EGifPutLine(gif, gif_line, w) != GIF_OK) {
             FREE(gif_line);
             pixDestroy(&pixd);
-            EGifCloseFile(gif, &giferr);
+            EGifCloseFile(gif);
             return ERROR_INT("failed to write data line into GIF", procName, 1);
         }
     }
@@ -436,7 +422,7 @@ int              giferr;
 
     FREE(gif_line);
     pixDestroy(&pixd);
-    EGifCloseFile(gif, &giferr);
+    EGifCloseFile(gif);
     return 0;
 }
 
@@ -491,7 +477,7 @@ PIX   *pix;
 
         /* Read back from the file */
     pix = pixRead(fname);
-    lept_rmfile(fname);
+    lept_rm(NULL, fname);
     lept_free(fname);
     if (!pix) L_ERROR("pix not read\n", procName);
     return pix;
@@ -534,7 +520,7 @@ char  *fname;
 
         /* Read back into memory */
     *pdata = l_binaryRead(fname, psize);
-    lept_rmfile(fname);
+    lept_rm(NULL, fname);
     lept_free(fname);
     return 0;
 }

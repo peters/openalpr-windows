@@ -44,7 +44,7 @@
  *         Scaling by closest pixel sampling
  *               PIX      *pixScaleBySampling()
  *               PIX      *pixScaleBySamplingToSize()
- *               PIX      *pixScaleByIntSampling()
+ *               PIX      *pixScaleByIntSubsampling()
  *
  *         Fast integer factor subsampling RGB to gray and to binary
  *               PIX      *pixScaleRGBToGrayFast()
@@ -880,7 +880,7 @@ l_float32  scalex, scaley;
 
 
 /*!
- *  pixScaleByIntSampling()
+ *  pixScaleByIntSubsampling()
  *
  *      Input:  pixs (1, 2, 4, 8, 16, 32 bpp)
  *              factor (integer subsampling)
@@ -892,12 +892,12 @@ l_float32  scalex, scaley;
  *      (2) If @factor == 1, returns a copy.
  */
 PIX *
-pixScaleByIntSampling(PIX     *pixs,
-                      l_int32  factor)
+pixScaleByIntSubsampling(PIX     *pixs,
+                         l_int32  factor)
 {
 l_float32  scale;
 
-    PROCNAME("pixScaleByIntSampling");
+    PROCNAME("pixScaleByIntSubsampling");
 
     if (!pixs)
         return (PIX *)ERROR_PTR("pixs not defined", procName, NULL);

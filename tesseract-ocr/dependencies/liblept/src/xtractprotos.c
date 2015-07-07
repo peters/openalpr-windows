@@ -78,8 +78,6 @@
  *
  *   The xtractprotos version number, defined below, is incremented
  *   whenever a new version is made.
- *
- *   N.B. This uses cpp to preprocess the input.
  */
 
 #include <string.h>
@@ -191,7 +189,7 @@ static char  mainName[] = "xtractprotos";
 	    continue;
 	snprintf(buf, L_BUF_SIZE, "cpp -ansi -DNO_PROTOS %s %s",
 	         filein, tempfile);
-	ret = system(buf);  /* cpp */
+	ret = system(buf);
 	if (ret) {
             fprintf(stderr, "cpp failure for %s; continuing\n", filein);
 	    continue;

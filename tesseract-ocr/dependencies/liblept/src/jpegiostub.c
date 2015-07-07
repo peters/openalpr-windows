@@ -40,10 +40,8 @@
 #if  !HAVE_LIBJPEG   /* defined in environ.h */
 /* --------------------------------------------*/
 
-/* ----------------------------------------------------------------------*/
-
 PIX * pixReadJpeg(const char *filename, l_int32 cmflag, l_int32 reduction,
-                  l_int32 *pnwarn, l_int32 hint)
+                  l_int32 *pnwarn)
 {
     return (PIX * )ERROR_PTR("function not present", "pixReadJpeg", NULL);
 }
@@ -135,6 +133,22 @@ l_int32 pixSetChromaSampling(PIX *pix, l_int32 sampling)
 }
 
 /* ----------------------------------------------------------------------*/
+
+l_int32 extractJpegDataFromFile(const char *filein, l_uint8 **pdata,
+                                size_t *pnbytes, l_int32 *pw, l_int32 *ph,
+                                l_int32 *pbps, l_int32 *pspp)
+{
+    return ERROR_INT("function not present", "extractJpegDataFromFile", 1);
+}
+
+/* ----------------------------------------------------------------------*/
+
+l_int32 extractJpegDataFromArray(const void *data, size_t nbytes,
+                                 l_int32 *pw, l_int32 *ph, l_int32 *pbps,
+                                 l_int32 *pspp)
+{
+    return ERROR_INT("function not present", "extractJpegDataFromArray", 1);
+}
 
 /* --------------------------------------------*/
 #endif  /* !HAVE_LIBJPEG */

@@ -81,17 +81,17 @@ enum {
 
     /* Output files for ioFormatTest().
      * Note that the test for jpeg is not yet implemented */
-static const char *FILE_BMP  =  "/tmp/lept/format.bmp";
-static const char *FILE_PNG  =  "/tmp/lept/format.png";
-static const char *FILE_PNM  =  "/tmp/lept/format.pnm";
-static const char *FILE_G3   =  "/tmp/lept/format_g3.tif";
-static const char *FILE_G4   =  "/tmp/lept/format_g4.tif";
-static const char *FILE_RLE  =  "/tmp/lept/format_rle.tif";
-static const char *FILE_PB   =  "/tmp/lept/format_packbits.tif";
-static const char *FILE_LZW  =  "/tmp/lept/format_lzw.tif";
-static const char *FILE_ZIP  =  "/tmp/lept/format_zip.tif";
-static const char *FILE_TIFF =  "/tmp/lept/format.tif";
-static const char *FILE_JPG  =  "/tmp/lept/format.jpg";
+static const char *FILE_BMP  =  "/tmp/junkout.bmp";
+static const char *FILE_PNG  =  "/tmp/junkout.png";
+static const char *FILE_PNM  =  "/tmp/junkout.pnm";
+static const char *FILE_G3   =  "/tmp/junkout_g3.tif";
+static const char *FILE_G4   =  "/tmp/junkout_g4.tif";
+static const char *FILE_RLE  =  "/tmp/junkout_rle.tif";
+static const char *FILE_PB   =  "/tmp/junkout_packbits.tif";
+static const char *FILE_LZW  =  "/tmp/junkout_lzw.tif";
+static const char *FILE_ZIP  =  "/tmp/junkout_zip.tif";
+static const char *FILE_TIFF =  "/tmp/junkout.tif";
+static const char *FILE_JPG  =  "/tmp/junkout.jpg";
 
     /* I found these from the source code to the unix file */
     /* command. man 1 file */
@@ -192,10 +192,8 @@ PIX   *pix;
     if (!filename)
         return (PIX *)ERROR_PTR("filename not defined", procName, NULL);
 
-    if ((fp = fopenReadStream(filename)) == NULL) {
-        L_ERROR("image file not found: %s\n", procName, filename);
-        return NULL;
-    }
+    if ((fp = fopenReadStream(filename)) == NULL)
+        return (PIX *)ERROR_PTR("image file not found", procName, NULL);
     if ((pix = pixReadStream(fp, 0)) == NULL) {
         fclose(fp);
         return (PIX *)ERROR_PTR("pix not read", procName, NULL);
@@ -372,8 +370,7 @@ PIX      *pix;
         break;
 
     case IFF_JP2:
-        if ((pix = pixReadStreamJp2k(fp, 1, NULL, 0)) == NULL)
-            return (PIX *)ERROR_PTR("jp2: no pix returned", procName, NULL);
+        return (PIX *)ERROR_PTR("jp2: format not supported", procName, NULL);
         break;
 
     case IFF_WEBP:
@@ -506,7 +503,8 @@ PIX     *pix;
         break;
 
     case IFF_JP2:
-        ret = readHeaderJp2k(filename, &w, &h, &bps, &spp);
+        ret = readHeaderJp2k(filename, &w, &h, &spp);
+        bps = 8;
         break;
 
     case IFF_WEBP:
@@ -772,13 +770,11 @@ l_int32  format;
  *  Notes:
  *      (1) This is a variation of pixReadStream(), where the data is read
  *          from a memory buffer rather than a file.
- *      (2) On windows, this only reads tiff formatted files directly from
- *          memory.  For other formats, it write to a temp file and
- *          decompress from file.
+ *      (2) On windows, this will only read tiff formatted files from
+ *          memory.  For other formats, it requires fmemopen(3).
+ *          Attempts to read those formats will fail at runtime.
  *      (3) findFileFormatBuffer() requires up to 8 bytes to decide on
- *          the format.  That determines the constraint here.  But in
- *          fact the data must contain the entire compressed string for
- *          the image.
+ *          the format.  That determines the constraint here.
  */
 PIX *
 pixReadMem(const l_uint8  *data,
@@ -837,13 +833,7 @@ PIX     *pix;
         break;
 
     case IFF_JP2:
-        if ((pix = pixReadMemJp2k(data, size, 1, NULL, 0)) == NULL)
-            return (PIX *)ERROR_PTR("jp2k: no pix returned", procName, NULL);
-        break;
-
-    case IFF_WEBP:
-        if ((pix = pixReadMemWebP(data, size)) == NULL)
-            return (PIX *)ERROR_PTR("webp: no pix returned", procName, NULL);
+        return (PIX *)ERROR_PTR("jp2: format not supported", procName, NULL);
         break;
 
     case IFF_SPIX:
@@ -882,15 +872,14 @@ PIX     *pix;
  *      Return: 0 if OK, 1 on error
  *
  *  Notes:
- *      (1) This reads the actual headers for jpeg, png, tiff, jp2k and pnm.
+ *      (1) This reads the actual headers for jpeg, png, tiff and pnm.
  *          For bmp and gif, we cheat and read all the data into a pix,
  *          from which we extract the "header" information.
- *      (2) The amount of data required depends on the format.  For
- *          png, it requires less than 30 bytes, but for jpeg it can
- *          require most of the compressed file.  In practice, the data
- *          is typically the entire compressed file in memory.
+ *      (2) On windows, this will only read tiff formatted files from
+ *          memory.  For other formats, it requires fmemopen(3).
+ *          Attempts to read those formats will fail at runtime.
  *      (3) findFileFormatBuffer() requires up to 8 bytes to decide on
- *          the format, which we require.
+ *          the format.  That determines the constraint here.
  */
 l_int32
 pixReadHeaderMem(const l_uint8  *data,
@@ -941,7 +930,7 @@ PIX     *pix;
         break;
 
     case IFF_PNG:
-        ret = readHeaderMemPng(data, size, &w, &h, &bps, &spp, &iscmap);
+        ret = sreadHeaderPng(data, &w, &h, &bps, &spp, &iscmap);
         if (ret)
             return ERROR_INT( "png: no header info returned", procName, 1);
         break;
@@ -961,7 +950,7 @@ PIX     *pix;
         break;
 
     case IFF_PNM:
-        ret = readHeaderMemPnm(data, size, &w, &h, &d, &type, &bps, &spp);
+        ret = sreadHeaderPnm(data, size, &w, &h, &d, &type, &bps, &spp);
         if (ret)
             return ERROR_INT( "pnm: no header info returned", procName, 1);
         break;
@@ -977,12 +966,8 @@ PIX     *pix;
         break;
 
     case IFF_JP2:
-        ret = readHeaderMemJp2k(data, size, &w, &h, &bps, &spp);
-        break;
-
-    case IFF_WEBP:
+        ret = sreadHeaderJp2k(data, size, &w, &h, &spp);
         bps = 8;
-        ret = readHeaderMemWebP(data, size, &w, &h, &spp);
         break;
 
     case IFF_SPIX:
@@ -1022,7 +1007,7 @@ PIX     *pix;
  *
  *  Notes:
  *      (1) This writes and reads a set of output files losslessly
- *          in different formats to /tmp/format/, and tests that the
+ *          in different formats to /tmp, and tests that the
  *          result before and after is unchanged.
  *      (2) This should work properly on input images of any depth,
  *          with and without colormaps.
@@ -1038,7 +1023,7 @@ l_int32
 ioFormatTest(const char  *filename)
 {
 l_int32   d, equal, problems;
-PIX      *pixs, *pixc, *pix1, *pix2;
+PIX      *pixs, *pixc, *pixt, *pixt2;
 PIXCMAP  *cmap;
 
     PROCNAME("ioFormatTest");
@@ -1048,8 +1033,6 @@ PIXCMAP  *cmap;
 
     if ((pixs = pixRead(filename)) == NULL)
         return ERROR_INT("pixs not made", procName, 1);
-
-    lept_mkdir("lept");
 
         /* Note that the reader automatically removes colormaps
          * from 1 bpp BMP images, but not from 8 bpp BMP images.
@@ -1077,30 +1060,30 @@ PIXCMAP  *cmap;
     if (d == 1 || d == 8) {
         L_INFO("write/read bmp\n", procName);
         pixWrite(FILE_BMP, pixc, IFF_BMP);
-        pix1 = pixRead(FILE_BMP);
+        pixt = pixRead(FILE_BMP);
         if (!cmap)
-            pix2 = pixRemoveColormap(pix1, REMOVE_CMAP_BASED_ON_SRC);
+            pixt2 = pixRemoveColormap(pixt, REMOVE_CMAP_BASED_ON_SRC);
         else
-            pix2 = pixClone(pix1);
-        pixEqual(pixc, pix2, &equal);
+            pixt2 = pixClone(pixt);
+        pixEqual(pixc, pixt2, &equal);
         if (!equal) {
-            L_INFO("   **** bad bmp image: d = %d ****\n", procName, d);
+            L_INFO("   **** bad bmp image ****\n", procName);
             problems = TRUE;
         }
-        pixDestroy(&pix1);
-        pixDestroy(&pix2);
+        pixDestroy(&pixt);
+        pixDestroy(&pixt2);
     }
 
     if (d == 2 || d == 4 || d == 32) {
         L_INFO("write/read bmp\n", procName);
         pixWrite(FILE_BMP, pixc, IFF_BMP);
-        pix1 = pixRead(FILE_BMP);
-        pixEqual(pixc, pix1, &equal);
+        pixt = pixRead(FILE_BMP);
+        pixEqual(pixc, pixt, &equal);
         if (!equal) {
-            L_INFO("   **** bad bmp image: d = %d ****\n", procName, d);
+            L_INFO("   **** bad bmp image ****\n", procName);
             problems = TRUE;
         }
-        pixDestroy(&pix1);
+        pixDestroy(&pixt);
     }
 
         /* ----------------------- PNG -------------------------- */
@@ -1110,13 +1093,13 @@ PIXCMAP  *cmap;
     if (d != 16) {
         L_INFO("write/read png\n", procName);
         pixWrite(FILE_PNG, pixc, IFF_PNG);
-        pix1 = pixRead(FILE_PNG);
-        pixEqual(pixc, pix1, &equal);
+        pixt = pixRead(FILE_PNG);
+        pixEqual(pixc, pixt, &equal);
         if (!equal) {
-            L_INFO("   **** bad png image: d = %d ****\n", procName, d);
+            L_INFO("   **** bad png image ****\n", procName);
             problems = TRUE;
         }
-        pixDestroy(&pix1);
+        pixDestroy(&pixt);
     }
 #endif  /* HAVE_LIBPNG */
 
@@ -1134,81 +1117,77 @@ PIXCMAP  *cmap;
         /* tiff uncompressed works for all pixel depths */
     L_INFO("write/read uncompressed tiff\n", procName);
     pixWrite(FILE_TIFF, pixc, IFF_TIFF);
-    pix1 = pixRead(FILE_TIFF);
-    pixEqual(pixc, pix1, &equal);
+    pixt = pixRead(FILE_TIFF);
+    pixEqual(pixc, pixt, &equal);
     if (!equal) {
-        L_INFO("   **** bad tiff uncompressed image: d = %d ****\n",
-               procName, d);
+        L_INFO("   **** bad tiff uncompressed image ****\n", procName);
         problems = TRUE;
     }
-    pixDestroy(&pix1);
+    pixDestroy(&pixt);
 
         /* tiff lzw works for all pixel depths */
     L_INFO("write/read lzw compressed tiff\n", procName);
     pixWrite(FILE_LZW, pixc, IFF_TIFF_LZW);
-    pix1 = pixRead(FILE_LZW);
-    pixEqual(pixc, pix1, &equal);
+    pixt = pixRead(FILE_LZW);
+    pixEqual(pixc, pixt, &equal);
     if (!equal) {
-        L_INFO("   **** bad tiff lzw compressed image: d = %d ****\n",
-               procName, d);
+        L_INFO("   **** bad tiff lzw compressed image ****\n", procName);
         problems = TRUE;
     }
-    pixDestroy(&pix1);
+    pixDestroy(&pixt);
 
         /* tiff adobe deflate (zip) works for all pixel depths */
     L_INFO("write/read zip compressed tiff\n", procName);
     pixWrite(FILE_ZIP, pixc, IFF_TIFF_ZIP);
-    pix1 = pixRead(FILE_ZIP);
-    pixEqual(pixc, pix1, &equal);
+    pixt = pixRead(FILE_ZIP);
+    pixEqual(pixc, pixt, &equal);
     if (!equal) {
-        L_INFO("   **** bad tiff zip compressed image: d = %d ****\n",
-               procName, d);
+        L_INFO("   **** bad tiff zip compressed image ****\n", procName);
         problems = TRUE;
     }
-    pixDestroy(&pix1);
+    pixDestroy(&pixt);
 
         /* tiff g4, g3, rle and packbits work for 1 bpp */
     if (d == 1) {
         L_INFO("write/read g4 compressed tiff\n", procName);
         pixWrite(FILE_G4, pixc, IFF_TIFF_G4);
-        pix1 = pixRead(FILE_G4);
-        pixEqual(pixc, pix1, &equal);
+        pixt = pixRead(FILE_G4);
+        pixEqual(pixc, pixt, &equal);
         if (!equal) {
             L_INFO("   **** bad tiff g4 image ****\n", procName);
             problems = TRUE;
         }
-        pixDestroy(&pix1);
+        pixDestroy(&pixt);
 
         L_INFO("write/read g3 compressed tiff\n", procName);
         pixWrite(FILE_G3, pixc, IFF_TIFF_G3);
-        pix1 = pixRead(FILE_G3);
-        pixEqual(pixc, pix1, &equal);
+        pixt = pixRead(FILE_G3);
+        pixEqual(pixc, pixt, &equal);
         if (!equal) {
             L_INFO("   **** bad tiff g3 image ****\n", procName);
             problems = TRUE;
         }
-        pixDestroy(&pix1);
+        pixDestroy(&pixt);
 
         L_INFO("write/read rle compressed tiff\n", procName);
         pixWrite(FILE_RLE, pixc, IFF_TIFF_RLE);
-        pix1 = pixRead(FILE_RLE);
-        pixEqual(pixc, pix1, &equal);
+        pixt = pixRead(FILE_RLE);
+        pixEqual(pixc, pixt, &equal);
         if (!equal) {
-            L_INFO("   **** bad tiff rle image: d = %d ****\n", procName, d);
+            L_INFO("   **** bad tiff rle image ****\n", procName);
             problems = TRUE;
         }
-        pixDestroy(&pix1);
+        pixDestroy(&pixt);
 
         L_INFO("write/read packbits compressed tiff\n", procName);
         pixWrite(FILE_PB, pixc, IFF_TIFF_PACKBITS);
-        pix1 = pixRead(FILE_PB);
-        pixEqual(pixc, pix1, &equal);
+        pixt = pixRead(FILE_PB);
+        pixEqual(pixc, pixt, &equal);
         if (!equal) {
-            L_INFO("   **** bad tiff packbits image: d = %d ****\n",
-                   procName, d);
+            L_INFO("   **** bad tiff packbits image ****\n", procName);
             problems = TRUE;
         }
-        pixDestroy(&pix1);
+        pixDestroy(&pixt);
     }
 #endif  /* HAVE_LIBTIFF */
 
@@ -1220,18 +1199,18 @@ PIXCMAP  *cmap;
          * we must remove the colormap from pixc before testing.  */
     L_INFO("write/read pnm\n", procName);
     pixWrite(FILE_PNM, pixc, IFF_PNM);
-    pix1 = pixRead(FILE_PNM);
+    pixt = pixRead(FILE_PNM);
     if (cmap)
-        pix2 = pixRemoveColormap(pixc, REMOVE_CMAP_BASED_ON_SRC);
+        pixt2 = pixRemoveColormap(pixc, REMOVE_CMAP_BASED_ON_SRC);
     else
-        pix2 = pixClone(pixc);
-    pixEqual(pix1, pix2, &equal);
+        pixt2 = pixClone(pixc);
+    pixEqual(pixt, pixt2, &equal);
     if (!equal) {
-        L_INFO("   **** bad pnm image: d = %d ****\n", procName, d);
+        L_INFO("   **** bad pnm image ****\n", procName);
         problems = TRUE;
     }
-    pixDestroy(&pix1);
-    pixDestroy(&pix2);
+    pixDestroy(&pixt);
+    pixDestroy(&pixt2);
 
     if (problems == FALSE)
         L_INFO("All formats read and written OK!\n", procName);

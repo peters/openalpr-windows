@@ -760,12 +760,10 @@ pixCompareGray(PIX        *pix1,
                l_float32  *prmsdiff,
                PIX       **ppixdiff)
 {
-char            buf[64];
-static l_int32  index = 0;
-l_int32         d1, d2, same, first, last;
-GPLOT          *gplot;
-NUMA           *na, *nac;
-PIX            *pixt;
+l_int32  d1, d2, first, last;
+GPLOT   *gplot;
+NUMA    *na, *nac;
+PIX     *pixt;
 
     PROCNAME("pixCompareGray");
 
@@ -788,28 +786,22 @@ PIX            *pixt;
     if (plottype > NUM_GPLOT_OUTPUTS)
         return ERROR_INT("invalid plottype", procName, 1);
 
-    lept_mkdir("lept");
-
     if (comptype == L_COMPARE_SUBTRACT)
         pixt = pixSubtractGray(NULL, pix1, pix2);
     else  /* comptype == L_COMPARE_ABS_DIFF) */
         pixt = pixAbsDifference(pix1, pix2);
 
-    pixZero(pixt, &same);
-    if (same)
-        L_INFO("Images are pixel-wise identical\n", procName);
-    if (psame) *psame = same;
+    if (psame)
+        pixZero(pixt, psame);
 
     if (pdiff)
         pixGetAverageMasked(pixt, NULL, 0, 0, 1, L_MEAN_ABSVAL, pdiff);
 
-        /* Don't bother to plot if the images are the same */
-    if (plottype && !same) {
+    if (plottype) {
         na = pixGetGrayHistogram(pixt, 1);
         numaGetNonzeroRange(na, TINY, &first, &last);
         nac = numaClipToInterval(na, 0, last);
-        snprintf(buf, sizeof(buf), "/tmp/lept/compare_gray%d", index++);
-        gplot = gplotCreate(buf, plottype,
+        gplot = gplotCreate("/tmp/grayroot", plottype,
                             "Pixel Difference Histogram", "diff val",
                             "number of pixels");
         gplotAddPlot(gplot, NULL, nac, GPLOT_LINES, "gray");
@@ -861,20 +853,14 @@ pixCompareRGB(PIX        *pix1,
               l_float32  *prmsdiff,
               PIX       **ppixdiff)
 {
-char            buf[64];
-static l_int32  index = 0;
-l_int32         rsame, gsame, bsame, same, first, rlast, glast, blast, last;
-l_float32       rdiff, gdiff, bdiff;
-GPLOT          *gplot;
-NUMA           *nar, *nag, *nab, *narc, *nagc, *nabc;
-PIX            *pixr1, *pixr2, *pixg1, *pixg2, *pixb1, *pixb2;
-PIX            *pixr, *pixg, *pixb;
+l_int32    rsame, gsame, bsame, first, rlast, glast, blast, last;
+l_float32  rdiff, gdiff, bdiff;
+GPLOT     *gplot;
+NUMA      *nar, *nag, *nab, *narc, *nagc, *nabc;
+PIX       *pixr1, *pixr2, *pixg1, *pixg2, *pixb1, *pixb2, *pixr, *pixg, *pixb;
 
     PROCNAME("pixCompareRGB");
 
-    if (psame) *psame = 0;
-    if (pdiff) *pdiff = 0.0;
-    if (prmsdiff) *prmsdiff = 0.0;
     if (ppixdiff) *ppixdiff = NULL;
     if (!pix1 || pixGetDepth(pix1) != 32)
         return ERROR_INT("pix1 not defined or not 32 bpp", procName, 1);
@@ -884,8 +870,6 @@ PIX            *pixr, *pixg, *pixb;
         return ERROR_INT("invalid comptype", procName, 1);
     if (plottype > NUM_GPLOT_OUTPUTS)
         return ERROR_INT("invalid plottype", procName, 1);
-
-    lept_mkdir("lept");
 
     pixr1 = pixGetRGBComponent(pix1, COLOR_RED);
     pixr2 = pixGetRGBComponent(pix2, COLOR_RED);
@@ -903,13 +887,15 @@ PIX            *pixr, *pixg, *pixb;
         pixb = pixAbsDifference(pixb1, pixb2);
     }
 
-    pixZero(pixr, &rsame);
-    pixZero(pixg, &gsame);
-    pixZero(pixb, &bsame);
-    same = rsame && gsame && bsame;
-    if (same)
-        L_INFO("Images are pixel-wise identical\n", procName);
-    if (psame) *psame = same;
+    if (psame) {
+        pixZero(pixr, &rsame);
+        pixZero(pixg, &gsame);
+        pixZero(pixb, &bsame);
+        if (!rsame || !gsame || !bsame)
+            *psame = 0;
+        else
+            *psame = 1;
+    }
 
     if (pdiff) {
         pixGetAverageMasked(pixr, NULL, 0, 0, 1, L_MEAN_ABSVAL, &rdiff);
@@ -918,8 +904,7 @@ PIX            *pixr, *pixg, *pixb;
         *pdiff = (rdiff + gdiff + bdiff) / 3.0;
     }
 
-        /* Don't bother to plot if the images are the same */
-    if (plottype && !same) {
+    if (plottype) {
         nar = pixGetGrayHistogram(pixr, 1);
         nag = pixGetGrayHistogram(pixg, 1);
         nab = pixGetGrayHistogram(pixb, 1);
@@ -931,8 +916,7 @@ PIX            *pixr, *pixg, *pixb;
         narc = numaClipToInterval(nar, 0, last);
         nagc = numaClipToInterval(nag, 0, last);
         nabc = numaClipToInterval(nab, 0, last);
-        snprintf(buf, sizeof(buf), "/tmp/lept/compare_rgb%d", index++);
-        gplot = gplotCreate(buf, plottype,
+        gplot = gplotCreate("/tmp/rgbroot", plottype,
                             "Pixel Difference Histogram", "diff val",
                             "number of pixels");
         gplotAddPlot(gplot, NULL, narc, GPLOT_LINES, "red");
@@ -1265,12 +1249,12 @@ NUMA       *nah, *nan, *nac;
 
     PROCNAME("pixGetDifferenceStats");
 
-    if (pfractdiff) *pfractdiff = 0.0;
-    if (pavediff) *pavediff = 0.0;
     if (!pfractdiff)
         return ERROR_INT("&fractdiff not defined", procName, 1);
+    *pfractdiff = 0.0;
     if (!pavediff)
         return ERROR_INT("&avediff not defined", procName, 1);
+    *pavediff = 0.0;
     if (!pix1)
         return ERROR_INT("pix1 not defined", procName, 1);
     if (!pix2)
@@ -1491,11 +1475,11 @@ PIX     *pix10, *pix11;
 
     PROCNAME("pixGetPerceptualDiff");
 
-    if (ppixdiff1) *ppixdiff1 = NULL;
-    if (ppixdiff2) *ppixdiff2 = NULL;
     if (!pfract)
         return ERROR_INT("&fract not defined", procName, 1);
     *pfract = 1.0;  /* init to completely different */
+    if (ppixdiff1) *ppixdiff1 = NULL;
+    if (ppixdiff2) *ppixdiff2 = NULL;
     if ((dilation & 1) == 0)
         return ERROR_INT("dilation must be odd", procName, 1);
     if (!pixs1)
@@ -1511,8 +1495,8 @@ PIX     *pix10, *pix11;
 
         /* Integer downsample if requested */
     if (sampling > 1) {
-        pix1 = pixScaleByIntSampling(pixs1, sampling);
-        pix2 = pixScaleByIntSampling(pixs2, sampling);
+        pix1 = pixScaleByIntSubsampling(pixs1, sampling);
+        pix2 = pixScaleByIntSubsampling(pixs2, sampling);
     } else {
         pix1 = pixClone(pixs1);
         pix2 = pixClone(pixs2);
@@ -1756,13 +1740,12 @@ PIXA      *pixa1, *pixa2, *pixadb;
 
     PROCNAME("pixCompareWithTranslation");
 
-    if (pdelx) *pdelx = 0;
-    if (pdely) *pdely = 0;
-    if (pscore) *pscore = 0.0;
     if (!pdelx || !pdely)
         return ERROR_INT("&delx and &dely not defined", procName, 1);
+    *pdelx = *pdely = 0;
     if (!pscore)
         return ERROR_INT("&score not defined", procName, 1);
+    *pscore = 0.0;
     if (!pix1)
         return ERROR_INT("pix1 not defined", procName, 1);
     if (!pix2)
@@ -1832,10 +1815,10 @@ PIXA      *pixa1, *pixa2, *pixadb;
 
     if (debugflag) {
         pixaConvertToPdf(pixadb, 300, 1.0, L_FLATE_ENCODE, 0, NULL,
-                         "/tmp/lept/compare.pdf");
-        convertFilesToPdf("/tmp/lept", "correl_", 30, 1.0, L_FLATE_ENCODE,
+                         "/tmp/cmp.pdf");
+        convertFilesToPdf("/tmp", "correl_", 30, 1.0, L_FLATE_ENCODE,
                           0, "Correlation scores at levels 1 through 5",
-                          "/tmp/lept/correl.pdf");
+                          "/tmp/correl.pdf");
         pixaDestroy(&pixadb);
     }
 
@@ -1907,7 +1890,7 @@ l_int32    shiftx, shifty, delx, dely;
 l_int32   *tab;
 l_float32  maxscore, score;
 FPIX      *fpix;
-PIX       *pix3, *pix4;
+PIX       *pixt1, *pixt2;
 
     PROCNAME("pixBestCorrelation");
 
@@ -1953,14 +1936,13 @@ PIX       *pix3, *pix4;
     }
 
     if (debugflag > 0) {
-        lept_mkdir("lept");
         char  buf[128];
-        pix3 = fpixDisplayMaxDynamicRange(fpix);
-        pix4 = pixExpandReplicate(pix3, 20);
-        snprintf(buf, sizeof(buf), "/tmp/lept/correl_%d.png", debugflag);
-        pixWrite(buf, pix4, IFF_PNG);
-        pixDestroy(&pix3);
-        pixDestroy(&pix4);
+        pixt1 = fpixDisplayMaxDynamicRange(fpix);
+        pixt2 = pixExpandReplicate(pixt1, 20);
+        snprintf(buf, sizeof(buf), "/tmp/correl_%d.png", debugflag);
+        pixWrite(buf, pixt2, IFF_PNG);
+        pixDestroy(&pixt1);
+        pixDestroy(&pixt2);
         fpixDestroy(&fpix);
     }
 

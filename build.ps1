@@ -283,6 +283,25 @@ function Vcxproj-Nuke {
     }
 }
 
+function Vcxproj-Set {
+    param(
+        [Parameter(Position = 0, ValueFromPipeline = $true)]
+        [string] $Project,
+        [Parameter(Position = 1, ValueFromPipeline = $true)]
+        [string] $Xpath,
+		 [Parameter(Position = 2, ValueFromPipeline = $true)]
+        [string] $Value
+    )
+
+    $VcxProj = Vcxproj-Parse $Project $Xpath
+    if($VcxProj.Nodes.Count -gt 0) {
+        foreach($Node in $VcxProj.Nodes) {
+            $Node.set_InnerXML($Value) | Out-Null
+        } 
+        $VcxProj.Document.Save($Project)
+    }
+}
+
 function Msbuild 
 {
     param(
@@ -637,18 +656,14 @@ function Build-OpenALPRNet
         )
 
         # <AdditionalDependencies>
-        $VcxProj = Vcxproj-Parse $OpenALPRNetDirOutputDir\openalpr-net.vcxproj "/rs:Project/rs:ItemDefinitionGroup/rs:Link/rs:AdditionalDependencies"
-        foreach($Node in $VcxProj.Nodes) {
-            $InnerXml = $AdditionalDependencies -join ";"
-            $Node.set_InnerXML($InnerXml) | Out-Null
-        } $VcxProj.Document.Save($VcxProjectFilename)
+        Vcxproj-Set $OpenALPRNetDirOutputDir\openalpr-net.vcxproj `
+			 "/rs:Project/rs:ItemDefinitionGroup/rs:Link/rs:AdditionalDependencies" `
+			 ($AdditionalDependencies -join ";")
 
         # <AdditionalIncludeDirectories>
-        $VcxProj = Vcxproj-Parse $OpenALPRNetDirOutputDir\openalpr-net.vcxproj "/rs:Project/rs:ItemDefinitionGroup/rs:ClCompile/rs:AdditionalIncludeDirectories"
-        foreach($Node in $VcxProj.Nodes) {
-            $InnerXml = $AdditionalIncludeDirectories -join ";"
-            $Node.set_InnerXML($InnerXml) | Out-Null
-        } $VcxProj.Document.Save($VcxProjectFilename)
+		Vcxproj-Set $OpenALPRNetDirOutputDir\openalpr-net.vcxproj `
+			"/rs:Project/rs:ItemDefinitionGroup/rs:ClCompile/rs:AdditionalIncludeDirectories" `
+			($AdditionalIncludeDirectories -join ";")
 
         # Nuke <TargetPlatformVersion>
         Vcxproj-Nuke $VcxProjectFilename "/rs:Project/rs:PropertyGroup/rs:TargetPlatformVersion"

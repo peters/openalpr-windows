@@ -19,8 +19,12 @@ NB! If you want to enable CUDA-support for OpenCV add `-CudaGeneration <Kepler|F
 * Visual Studio 
 * CUDA SDK 7 (Only if you need CUDA support)
 * GIT
+* Powershell
 
 ## Getting started
+
+NB! If you haven't done so already, please update your powershell execution policy
+running the following command, `Set-ExecutionPolicy RemoteSigned`.
 
 * `git clone https://github.com/openalpr/openalpr.git`
 * `cd openalpr`

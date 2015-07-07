@@ -46,7 +46,7 @@ if($CudaGeneration -ne "None") {
 }
 
 # Msbuild
-$global:PlatformTarget = $null
+$global:ToolsVersion = $null
 $global:VisualStudioVersion = $null
 $global:VXXCommonTools = $null
 $global:CmakeGenerator = $null
@@ -184,31 +184,31 @@ function Set-PlatformToolset
 {
     Write-Diagnostic "PlatformToolset: $PlatformToolset"
 
-    $PlatformTarget = $null
+    $ToolsVersion = $null
     $VisualStudioVersion = $null
     $VXXCommonTools = $null
 
     switch -Exact ($PlatformToolset) {
         "v100" {
-            $global:PlatformTarget = "4.0"
+            $global:ToolsVersion = "4.0"
             $global:VisualStudioVersion = "10.0"
             $global:VXXCommonTools = $env:VS100COMNTOOLS
             $global:CmakeGenerator = "Visual Studio 10 2010"
         }
         "v110" {
-            $global:PlatformTarget = "4.0"
+            $global:ToolsVersion = "4.0"
             $global:VisualStudioVersion = "11.0"
             $global:VXXCommonTools = $env:VS110COMNTOOLS
             $global:CmakeGenerator = "Visual Studio 11 2012"
         }
         "v120" {
-            $global:PlatformTarget = "12.0"
+            $global:ToolsVersion = "12.0"
             $global:VisualStudioVersion = "12.0"
             $global:VXXCommonTools = $env:VS120COMNTOOLS
             $global:CmakeGenerator = "Visual Studio 12 2013"
         }
         "v140" {
-            $global:PlatformTarget = "14.0"
+            $global:ToolsVersion = "14.0"
             $global:VisualStudioVersion = "14.0"
             $global:VXXCommonTools = $env:VS140COMNTOOLS 
             $global:CmakeGenerator = "Visual Studio 14 2015"
@@ -332,10 +332,9 @@ function Msbuild
     $Arguments = @(
         "$Project",
         "/t:Rebuild",
-        #"/tv:$VisualStudioVersion",
         "/m", # Parallel build
         "/p:VisualStudioVersion=$VisualStudioVersion",
-        "/p:PlatformTarget=$PlatformTarget",
+        "/p:PlatformTarget=$ToolsVersion",
         "/p:PlatformToolset=$PlatformToolset",
         "/p:Platform=$Platform",
         "/p:PreferredToolArchitecture=$PreferredToolArchitecture",

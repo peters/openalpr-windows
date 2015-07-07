@@ -300,6 +300,7 @@ function Vcxproj-Set {
         } 
         $VcxProj.Document.Save($Project)
     }
+
 }
 
 function Msbuild 
@@ -586,83 +587,8 @@ function Build-OpenALPRNet
     {		
         Copy-Item $OpenALPRNetDir -Recurse -Force $OpenALPRNetDirOutputDir | Out-Null
 
-        $AdditionalIncludeDirectories = @(
-            "$OpenALPRDir\src\openalpr",
-            "$TesseractDir\tesseract-ocr\src\api",
-            "$TesseractDir\tesseract-ocr\src\ccstruct",
-            "$TesseractDir\tesseract-ocr\src\ccmain",
-            "$TesseractDir\tesseract-ocr\src\ccutil",
-            "$OpenCVDir\opencv\include",
-            "$OpenCVDir\opencv\include\opencv",
-            "$OpenCVDir\modules\core\include",
-            "$OpenCVDir\modules\flann\include",
-            "$OpenCVDir\modules\imgproc\include",
-            "$OpenCVDir\modules\highgui\include",
-            "$OpenCVDir\modules\features2d\include",
-            "$OpenCVDir\modules\calib3d\include",
-            "$OpenCVDir\modules\ml\include",
-            "$OpenCVDir\modules\video\include",
-            "$OpenCVDir\modules\legacy\include",
-            "$OpenCVDir\modules\objdetect\include",
-            "$OpenCVDir\modules\photo\includ;",
-            "$OpenCVDir\modules\gpu\include",
-            "$OpenCVDir\modules\ocl\include",
-            "$OpenCVDir\modules\nonfree\include",
-            "$OpenCVDir\modules\contrib\include",
-            "$OpenCVDir\modules\stitching\include",
-            "$OpenCVDir\modules\superres\include",
-            "$OpenCVDir\modules\ts\include",
-            "$OpenCVDir\modules\videostab\include"
-        ) 
-
-        $AdditionalDependencies = @(
-            'kernel32.lib',
-            'user32.lib',
-            'gdi32.lib',
-            'winspool.lib',
-            'shell32.lib',
-            'ole32.lib',
-            'oleaut32.lib',
-            'uuid.lib',
-            'comdlg32.lib',
-            'advapi32.lib',
-            'ws2_32.lib',
-            "$DistDir\opencv_videostab$OpenCVLibName.lib",
-            "$DistDir\opencv_ts$OpenCVLibName.lib",
-            "$DistDir\opencv_superres$OpenCVLibName.lib",
-            "$DistDir\opencv_stitching$OpenCVLibName.lib",
-            "$DistDir\opencv_contrib$OpenCVLibName.lib",
-            "$DistDir\opencv_nonfree$OpenCVLibName.lib",
-            "$DistDir\opencv_ocl$OpenCVLibName.lib",
-            "$DistDir\opencv_gpu$OpenCVLibName.lib",
-            "$DistDir\opencv_photo$OpenCVLibName.lib",
-            "$DistDir\opencv_objdetect$OpenCVLibName.lib",
-            "$DistDir\opencv_legacy$OpenCVLibName.lib",
-            "$DistDir\opencv_video$OpenCVLibName.lib",
-            "$DistDir\opencv_ml$OpenCVLibName.lib",
-            "$DistDir\opencv_calib3d$OpenCVLibName.lib",
-            "$DistDir\opencv_features2d$OpenCVLibName.lib",
-            "$DistDir\opencv_highgui$OpenCVLibName.lib",
-            "$DistDir\opencv_imgproc$OpenCVLibName.lib",
-            "$DistDir\opencv_flann$OpenCVLibName.lib",
-            "$DistDir\opencv_flann$OpenCVLibName.lib",
-            "$DistDir\opencv_core$OpenCVLibName.lib",
-            "$DistDir\openalpr-static.lib"
-            "$DistDir\support.lib"
-            "$DistDir\video.lib"
-            "$DistDir\$TesseractLibName",
-            "$DistDir\$LeptonicaLibName"
-        )
-
-        # <AdditionalDependencies>
-        Vcxproj-Set $OpenALPRNetDirOutputDir\openalpr-net.vcxproj `
-			 "/rs:Project/rs:ItemDefinitionGroup/rs:Link/rs:AdditionalDependencies" `
-			 ($AdditionalDependencies -join ";")
-
-        # <AdditionalIncludeDirectories>
-		Vcxproj-Set $OpenALPRNetDirOutputDir\openalpr-net.vcxproj `
-			"/rs:Project/rs:ItemDefinitionGroup/rs:ClCompile/rs:AdditionalIncludeDirectories" `
-			($AdditionalIncludeDirectories -join ";")
+		# Set working directory
+		Vcxproj-Set $VcxProjectFilename '/rs:Project/rs:PropertyGroup[@Label="Globals"]/rs:OpenALPRWindowsDir' $WorkingDir
 
         # Nuke <TargetPlatformVersion>
         Vcxproj-Nuke $VcxProjectFilename "/rs:Project/rs:PropertyGroup/rs:TargetPlatformVersion"

@@ -358,7 +358,7 @@ function Apply-Patch
     Copy-Item -Force $PatchAbsPath $DestinationDir | Out-Null
     pushd $DestinationDir 
     git reset --hard | Out-Null
-    git apply --index $Filename | Out-Null
+    git apply --ignore-whitespace --index $Filename | Out-Null
     pushd $WorkingDir
 
 }

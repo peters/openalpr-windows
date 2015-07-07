@@ -424,7 +424,7 @@ function Build-Tesseract
 
     $ProjectsPath = Join-Path $WorkingDir tesseract-ocr\dependencies
 
-    if(Test-Path $OutputDir\tesseract) {
+    if(Test-Path $OutputDir\tesseract\*tesseract*.lib) {
         Write-Output "Tesseract: Already built, skipping."
         return
     }

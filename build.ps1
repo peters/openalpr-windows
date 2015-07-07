@@ -366,10 +366,9 @@ function Apply-Patch
 function Set-AssemblyVersion {
 	Set-Variable VERSION_PATTERN -option Constant -value "^([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?$"
     param(
-        [parameter(Position = 0, Mandatory = $true, ValueFromPipeline = $true)],
+        [parameter(Position = 0, Mandatory = $true, ValueFromPipeline = $true)]
         [string]$assemblyInfo,
-        [parameter(Position = 1, Mandatory = $true, ValueFromPipeline = $true)],
-        [ValidatePattern($VERSION_PATTERN)],
+        [parameter(Position = 1, Mandatory = $true, ValueFromPipeline = $true)]
         [string]$version
     )
 

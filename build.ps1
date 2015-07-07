@@ -313,7 +313,7 @@ function Msbuild
     $Arguments = @(
         "$Project",
         "/t:Rebuild",
-        "/tv:$VisualStudioVersion",
+        #"/tv:$VisualStudioVersion",
         "/m", # Parallel build
         "/p:VisualStudioVersion=$VisualStudioVersion",
         "/p:PlatformTarget=$PlatformTarget",

@@ -350,7 +350,8 @@ function Msbuild
     }
     
     Vcxproj-Nuke $Project "/rs:Project/rs:ItemDefinitionGroup/rs:PostBuildEvent"
-    
+    Vcxproj-Set $Project  "/rs:Project/@ToolsVersion" $ToolsVersion
+
     Start-Process "msbuild.exe" $Arguments
 
 }

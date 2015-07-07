@@ -342,7 +342,7 @@ function Apply-Patch
     param(
         [Parameter(Position = 0, ValueFromPipeline = $true)]
         [string] $Filename,
-        [Parameter(Position = 0, ValueFromPipeline = $true)]
+        [Parameter(Position = 1, ValueFromPipeline = $true)]
         [string] $DestinationDir
     )
 

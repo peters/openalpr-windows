@@ -236,6 +236,8 @@ function Set-PlatformToolset
         $global:CmakeGenerator += " Win64"
     }
 
+	Invoke-BatchFile $global:VXXCommonTools $Platform
+
     Write-Diagnostic "PlatformToolset: Successfully configured msvs PlatformToolset $PlatformToolset"
 
 }

@@ -363,7 +363,6 @@ function Apply-Patch
 
 }
 
-# https://github.com/OdinKapitalAS/odinoffice/blob/develop/myget.include.ps1#L69
 function Set-AssemblyVersion {
 	Set-Variable VERSION_PATTERN -option Constant -value "^([0-9]+)\.([0-9]+)\.([0-9]+)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+)?$"
     param(

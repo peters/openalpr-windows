@@ -210,7 +210,7 @@ function Set-PlatformToolset
         "v140" {
             $global:PlatformTarget = "14.0"
             $global:VisualStudioVersion = "14.0"
-            $global:VXXCommonTools = $env:VS120COMNTOOLS 
+            $global:VXXCommonTools = $env:VS140COMNTOOLS 
             $global:CmakeGenerator = "Visual Studio 14 2015"
         }
     }

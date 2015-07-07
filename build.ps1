@@ -52,8 +52,8 @@ $global:VXXCommonTools = $null
 $global:CmakeGenerator = $null
 
 # Dependencies version numbering
-$TesseractVersion = "304"
-$LeptonicaVersion = "171"
+$TesseractVersion = "303"
+$LeptonicaVersion = "170"
 $OpenCVVersion = "248"
 $OpenALPRVersionMajorMinorPatch = $OpenALPRVersion -replace '.', ''
 
@@ -474,7 +474,7 @@ function Build-Tesseract
         "/p:LeptonicaDependenciesDirectory=`"$OutputDir\tesseract`"" # Above dependencies link path
     )
     
-    Apply-Patch tesseract.x64.support.diff $WorkingDir\tesseract-ocr\src
+    Apply-Patch tesseract$TesseractVersion.x64.support.diff $WorkingDir\tesseract-ocr\src
     
     Msbuild $Workingdir\tesseract-ocr\src\vs2010\libtesseract\libtesseract.vcxproj $OutputDir\tesseract @(
         "/p:Configuration=LIB_$Configuration" 				

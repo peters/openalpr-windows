@@ -21,7 +21,7 @@ param(
 )
 
 # Utilities
-$MsbuildExe = Join-Path (${Env:ProgramFiles(x86)}) MSBuild\$ToolsVersion\Bin\msbuild.exe
+$MsbuildExe = $null
 
 # IO
 $WorkingDir = Split-Path -parent $MyInvocation.MyCommand.Definition
@@ -234,6 +234,8 @@ function Set-PlatformToolset
 
 	Invoke-BatchFile $VXXCommonTools $Platform
 
+	$script:MsbuildExe = Join-Path (${Env:ProgramFiles(x86)}) MSBuild\$ToolsVersion\Bin\msbuild.exe
+	
     Write-Diagnostic "PlatformToolset: Successfully configured msvs PlatformToolset $PlatformToolset"
 
 }

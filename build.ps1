@@ -599,7 +599,8 @@ function Build-OpenALPRNet
     {
         Msbuild $VcxProjectFilename $OpenALPRNetDirOutputDir\$Configuration @(
             "/p:Configuration=$Configuration",
-            "/p:TargetFrameworkVersion=v4.0"
+            "/p:TargetFrameworkVersion=v4.0",
+			"/p:CudaGeneration=$CudaGeneration"
         )
 
         Copy-Item -Force $OpenALPRNetDirOutputDir\$Configuration\openalpr-net.dll $DistDir | Out-Null

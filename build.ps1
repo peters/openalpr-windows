@@ -207,10 +207,10 @@ function Set-PlatformToolset
             $script:CmakeGenerator = "Visual Studio 12 2013"
         }
         "v140" {
-            $ToolsVersion = "14.0"
-            $VisualStudioVersion = "14.0"
-            $VXXCommonTools = $env:VS140COMNTOOLS 
-            $CmakeGenerator = "Visual Studio 14 2015"
+            $script:ToolsVersion = "14.0"
+            $script:VisualStudioVersion = "14.0"
+            $script:VXXCommonTools = $env:VS140COMNTOOLS 
+            $script:CmakeGenerator = "Visual Studio 14 2015"
         }
     }
 
@@ -218,18 +218,18 @@ function Set-PlatformToolset
         Die "PlatformToolset $PlatformToolset is not installed."
     }
 
-    $VXXCommonTools = Join-Path $VXXCommonTools  "..\..\vc"
+    $script:VXXCommonTools = Join-Path $VXXCommonTools  "..\..\vc"
     if ($VXXCommonTools -eq $null -or (-not (Test-Path($VXXCommonTools)))) {
         Die "Error unable to find any visual studio environment"
     }
     
-    $VCVarsAll = Join-Path $VXXCommonTools vcvarsall.bat
+    $script:VCVarsAll = Join-Path $VXXCommonTools vcvarsall.bat
     if (-not (Test-Path $VCVarsAll)) {
         Die "Unable to find $VCVarsAll"
     }
         
     if($Platform -eq "x64") {
-        $CmakeGenerator += " Win64"
+        $script:CmakeGenerator += " Win64"
     }
 
 	Invoke-BatchFile $VXXCommonTools $Platform

@@ -49,10 +49,10 @@ if($CudaGeneration -ne "None") {
 }
 
 # Msbuild
-$global:ToolsVersion = $null
-$global:VisualStudioVersion = $null
-$global:VXXCommonTools = $null
-$global:CmakeGenerator = $null
+$ToolsVersion = $null
+$VisualStudioVersion = $null
+$VXXCommonTools = $null
+$CmakeGenerator = $null
 
 # Dependencies version numbering
 $TesseractVersion = "303"
@@ -187,56 +187,52 @@ function Set-PlatformToolset
 {
     Write-Diagnostic "PlatformToolset: $PlatformToolset"
 
-    $ToolsVersion = $null
-    $VisualStudioVersion = $null
-    $VXXCommonTools = $null
-
     switch -Exact ($PlatformToolset) {
         "v100" {
-            $global:ToolsVersion = "4.0"
-            $global:VisualStudioVersion = "10.0"
-            $global:VXXCommonTools = $env:VS100COMNTOOLS
-            $global:CmakeGenerator = "Visual Studio 10 2010"
+            $script:ToolsVersion = "4.0"
+            $script:VisualStudioVersion = "10.0"
+            $script:VXXCommonTools = $env:VS100COMNTOOLS
+            $script:CmakeGenerator = "Visual Studio 10 2010"
         }
         "v110" {
-            $global:ToolsVersion = "4.0"
-            $global:VisualStudioVersion = "11.0"
-            $global:VXXCommonTools = $env:VS110COMNTOOLS
-            $global:CmakeGenerator = "Visual Studio 11 2012"
+            $script:ToolsVersion = "4.0"
+            $script:VisualStudioVersion = "11.0"
+            $script:VXXCommonTools = $env:VS110COMNTOOLS
+            $script:CmakeGenerator = "Visual Studio 11 2012"
         }
         "v120" {
-            $global:ToolsVersion = "12.0"
-            $global:VisualStudioVersion = "12.0"
-            $global:VXXCommonTools = $env:VS120COMNTOOLS
-            $global:CmakeGenerator = "Visual Studio 12 2013"
+            $script:ToolsVersion = "12.0"
+            $script:VisualStudioVersion = "12.0"
+            $script:VXXCommonTools = $env:VS120COMNTOOLS
+            $script:CmakeGenerator = "Visual Studio 12 2013"
         }
         "v140" {
-            $global:ToolsVersion = "14.0"
-            $global:VisualStudioVersion = "14.0"
-            $global:VXXCommonTools = $env:VS140COMNTOOLS 
-            $global:CmakeGenerator = "Visual Studio 14 2015"
+            $ToolsVersion = "14.0"
+            $VisualStudioVersion = "14.0"
+            $VXXCommonTools = $env:VS140COMNTOOLS 
+            $CmakeGenerator = "Visual Studio 14 2015"
         }
     }
 
-    if ($global:VXXCommonTools -eq $null -or (-not (Test-Path($global:VXXCommonTools)))) {
+    if ($VXXCommonTools -eq $null -or (-not (Test-Path($VXXCommonTools)))) {
         Die "PlatformToolset $PlatformToolset is not installed."
     }
 
-    $global:VXXCommonTools = Join-Path $global:VXXCommonTools  "..\..\vc"
-    if ($global:VXXCommonTools -eq $null -or (-not (Test-Path($global:VXXCommonTools)))) {
+    $VXXCommonTools = Join-Path $VXXCommonTools  "..\..\vc"
+    if ($VXXCommonTools -eq $null -or (-not (Test-Path($VXXCommonTools)))) {
         Die "Error unable to find any visual studio environment"
     }
     
-    $VCVarsAll = Join-Path $global:VXXCommonTools vcvarsall.bat
+    $VCVarsAll = Join-Path $VXXCommonTools vcvarsall.bat
     if (-not (Test-Path $VCVarsAll)) {
         Die "Unable to find $VCVarsAll"
     }
         
     if($Platform -eq "x64") {
-        $global:CmakeGenerator += " Win64"
+        $CmakeGenerator += " Win64"
     }
 
-	Invoke-BatchFile $global:VXXCommonTools $Platform
+	Invoke-BatchFile $VXXCommonTools $Platform
 
     Write-Diagnostic "PlatformToolset: Successfully configured msvs PlatformToolset $PlatformToolset"
 
@@ -500,7 +496,7 @@ function Build-OpenCV
         "-DBUILD_EXAMPLES=OFF",
         "-DCMAKE_BUILD_TYPE=$Configuration",
         "-Wno-dev",
-        "-G`"$global:CmakeGenerator`"",
+        "-G`"$CmakeGenerator`"",
         "-H`"$OpenCVDir`"",
         "-B`"$OpenCVOutputDir`""
     )
@@ -556,7 +552,7 @@ function Build-OpenALPR
         "-DWITH_UTILITIES=ON",
         "-DCMAKE_BUILD_TYPE=$Configuration",
         "-Wno-dev",
-        "-G`"$global:CmakeGenerator`"",
+        "-G`"$CmakeGenerator`"",
         "-H`"$OpenALPRDir\src`"",
         "-B`"$OpenALPROutputDir`""
     )

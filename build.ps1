@@ -669,7 +669,8 @@ $BuildTime = $StopWatch::StartNew()
 switch($Target) 
 {
     "Build" {		
-		
+		Set-PlatformToolset
+
 		Requires-Cmake
 		Requires-Msbuild
 		Requires-Cmake
@@ -678,9 +679,7 @@ switch($Target)
             Remove-Item -Recurse -Force $OutputDir | Out-Null 
             Remove-Item -Recurse -Force $DistDir | Out-Null
         }
-
-        Set-PlatformToolset
-
+		
         Build-Tesseract
         Build-OpenCV
         Build-OpenALPR

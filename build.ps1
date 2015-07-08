@@ -1,6 +1,6 @@
 param(
     [Parameter(Position = 0, ValueFromPipeline = $true)] 
-    [string] $OpenALPRVersion = "2.0.1",
+    [string] $OpenALPRVersion = "2.1.0",
     [ValidateSet("Build")]
     [Parameter(Position = 1, ValueFromPipeline = $true)] 
     [string] $Target = "Build",

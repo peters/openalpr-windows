@@ -512,7 +512,7 @@ function Build-OpenCV
     }
 
     if($CudaGeneration -ne "None") {
-        Apply-Patch opencv$OpenCVVersion.cudafixes.diff $OpenCVDir\modules\gpu\src\nvidia\core
+        Apply-Patch opencv$OpenCVVersion.cudafixes.diff $OpenCVDir
     }
 
     Start-Process "cmake.exe" @($CmakeArguments)

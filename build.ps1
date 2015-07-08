@@ -1,7 +1,7 @@
 param(
     [Parameter(Position = 0, ValueFromPipeline = $true)] 
     [string] $OpenALPRVersion = "2.1.0",
-    [ValidateSet("Build")]
+    [ValidateSet("Build", "Nupkg")]
     [Parameter(Position = 1, ValueFromPipeline = $true)] 
     [string] $Target = "Build",
     [Parameter(Position = 2, ValueFromPipeline = $true)]
@@ -566,6 +566,28 @@ function Build-OpenALPR
     )	
 }
 
+function Nupkg-OpenALPRNet
+{
+    $NuspecFile = Join-Path $WorkingDir openalpr.nuspec
+
+    $NupkgProperties = @(
+        "DistDir=`"$DistDir`"",
+        "Platform=`"$Platform`"",
+        "PlatformToolset=`"$PlatformToolset`"",
+        "Version=$OpenALPRVersion",
+        "Configuration=$Configuration"
+    ) -join ";"
+
+    $NupkgArguments = @(
+        "pack",
+        "$NuspecFile",
+        "-Properties `"$NupkgProperties`"",
+        "-OutputDirectory `"$DistDir`""
+    )
+
+    Start-Process "nuget.exe" $NupkgArguments
+}
+
 function Build-OpenALPRNet 
 {
     Write-Diagnostic "OpenALPRNet: $Configuration, $Platform, $PlatformToolset"
@@ -601,32 +623,9 @@ function Build-OpenALPRNet
 
         Copy-Item -Force $OpenALPRNetDirOutputDir\$Configuration\openalpr-net.dll $DistDir | Out-Null
     }
-
-    function Nupkg 
-    {		
-        $NuspecFile = Join-Path $WorkingDir openalpr.nuspec
-
-        $NupkgProperties = @(
-            "DistDir=`"$DistDir`"",
-            "Platform=`"$Platform`"",
-            "PlatformToolset=`"$PlatformToolset`"",
-            "Version=$OpenALPRVersion",
-            "Configuration=$Configuration"
-        ) -join ";"
-
-        $NupkgArguments = @(
-            "pack",
-            "$NuspecFile",
-            "-Properties `"$NupkgProperties`"",
-            "-OutputDirectory `"$DistDir`""
-        )
-
-        Start-Process "nuget.exe" $NupkgArguments
-    }
     
     Copy-Sources
     Build-Sources
-    Nupkg
 
 }
 
@@ -687,6 +686,13 @@ switch($Target)
 
 		Copy-Build-Result-To $DistDir
     }
+	"Nupkg" {
+		if(-not (Test-Path $OpenALPRNetDirOutputDir)) {
+			Write-Error "Please run build command before attempting to create nuget package."
+			exit 0
+		}
+		Nupkg-OpenALPRNet
+	}
 }
 
 $BuildTime.Stop()		

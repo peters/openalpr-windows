@@ -564,8 +564,6 @@ function Build-OpenALPR
     Start-Process "cmake.exe" @(
         "--build `"$OpenALPROutputDir`" --config $Configuration"
     )	
-
-    Copy-Build-Result-To $DistDir
 }
 
 function Build-OpenALPRNet 
@@ -639,7 +637,7 @@ function Copy-Build-Result-To
         [string] $DestinationDir
     )
     
-    Write-Diagnostic "Copy: $DestinationDir"
+    Write-Diagnostic "Copy-Build-Result-To: $DestinationDir"
     
     if(-not (Test-Path($DestinationDir))) {
         New-Item -ItemType Directory -Path $DestinationDir -Force | Out-Null
@@ -685,8 +683,9 @@ switch($Target)
         Build-Tesseract
         Build-OpenCV
         Build-OpenALPR
-        Build-OpenALPRNet
+        Build-OpenALPRNet		
 
+		Copy-Build-Result-To $DistDir
     }
 }
 

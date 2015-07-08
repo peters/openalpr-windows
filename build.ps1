@@ -513,7 +513,7 @@ function Build-OpenCV
         Apply-Patch opencv$OpenCVVersion.cudafixes.diff $OpenCVDir
     }
 
-    Start-Process "cmake.exe" @($CmakeArguments)
+    Start-Process "cmake.exe" $CmakeArguments
     
     Start-Process "cmake.exe" @(
         "--build `"$OpenCVOutputDir`" --config $Configuration"
@@ -559,8 +559,8 @@ function Build-OpenALPR
         "-B`"$OpenALPROutputDir`""
     )
     
-    Start-Process "cmake.exe" @($CmakeArguments)
-    
+    Start-Process "cmake.exe" $CmakeArguments
+   
     Start-Process "cmake.exe" @(
         "--build `"$OpenALPROutputDir`" --config $Configuration"
     )	

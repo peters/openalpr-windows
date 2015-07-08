@@ -28,7 +28,7 @@
     <file src="$DistDir$\runtime_data\**\*.*" target="build\native\windows\$Platform$\runtime_data" />	
 
 	<!-- visual studio -->
-    <file src="openalpr.targets" target="build\openalpr.$Platform$.targets"  />
+    <file src="openalpr.targets" target="build\OpenALPR.$PlatformToolset$.$Platform$.$Configuration$.targets"  />
  		
   </files>
 </package>

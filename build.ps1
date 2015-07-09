@@ -17,7 +17,9 @@ param(
     [Parameter(Position = 5, ValueFromPipeline = $true)]
     [string] $CudaGeneration = "None",
     [Parameter(Position = 6, ValueFromPipeline = $true)]
-    [string] $Clean = $false
+    [string] $Clean = $false,
+	[Parameter(Position = 7, ValueFromPipeline = $true)]
+    [string] $RebuildOpenALPR = $false
 )
 
 # Utilities
@@ -527,7 +529,7 @@ function Build-OpenALPR
 {
     Write-Diagnostic "OpenALPR: $Configuration, $Platform, $PlatformToolset"
     
-    if(Test-Path $OpenALPROutputDir) {
+    if($RebuildOpenALPR -eq $false -and (Test-Path $OpenALPROutputDir)) {
         Write-Output "OpenALPR: Already built, skipping."
         return
     }
@@ -594,7 +596,7 @@ function Build-OpenALPRNet
 {
     Write-Diagnostic "OpenALPRNet: $Configuration, $Platform, $PlatformToolset"
 
-    if(Test-Path $OpenALPRNetDirOutputDir) {
+    if($RebuildOpenALPR -eq $false -and (Test-Path $OpenALPRNetDirOutputDir)) {
         Write-Output "OpenALPRNet: Already built, skipping."
         return
     }

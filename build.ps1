@@ -45,6 +45,8 @@ $OpenCVOutputDir = Join-Path $OutputDir opencv
 
 if($CudaGeneration -ne "None") {
     $OpenCVOutputDir += "_CUDA_$CudaGeneration"
+	$OpenALPROutputDir += "_CUDA_$CudaGeneration"
+	$OpenALPRNetDirOutputDir += "_CUDA_$CudaGeneration"
     $DistDir += "_CUDA_$CudaGeneration"
 }
 
@@ -651,8 +653,8 @@ function Copy-Build-Result-To
     Copy-Item $TesseractOutputDir\*.lib -Force $DestinationDir | Out-Null
 
     # OpenALPR
-    Copy-Item $OutputDir\openalpr\$Configuration\alpr.exe $DestinationDir | Out-Null	
-    Copy-Item $OutputDir\openalpr\misc_utilities\$Configuration\*.* $DestinationDir | Out-Null	
+    Copy-Item $OpenALPROutputDir\$Configuration\alpr.exe $DestinationDir | Out-Null	
+    Copy-Item $OpenALPROutputDir\misc_utilities\$Configuration\*.* $DestinationDir | Out-Null	
     Copy-Item $OpenALPROutputDir\openalpr\$Configuration\openalpr.lib -Force $DestinationDir\openalpr.lib | Out-Null
     Copy-Item $OpenALPROutputDir\openalpr\$Configuration\openalpr-static.lib -Force $DestinationDir\openalpr-static.lib | Out-Null
     Copy-Item $OpenALPROutputDir\video\$Configuration\video.lib -Force $DestinationDir\video.lib | Out-Null

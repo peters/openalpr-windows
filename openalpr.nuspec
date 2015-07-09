@@ -15,20 +15,18 @@
 	<projectUrl>https://github.com/openalpr/openalpr</projectUrl>
   </metadata>
   <files>
-
-	<!-- dependencies -->
     <file src="$DistDir$\openalpr-net.dll" target="lib\net40\openalpr-net.dll"  />
     <file src="$DistDir$\opencv**.dll" target="build\native\windows\$Platform$" />	
-	<file src="$DistDir$\openalpr-utils**.exe" target="build\native\windows\$Platform$" />
+	<file src="$DistDir$\openalpr-utils-calibrate.exe" target="build\native\windows\$Platform$" />
     <file src="$DistDir$\liblept**.dll" target="build\native\windows\$Platform$"  />
-    <file src="$DistDir$\liblept**.dll" target="build\native\windows\$Platform$"  />
-
+    <file src="$DistDir$\liblept**.dll" target="build\native\windows\$Platform$"  /> 		
+	
 	<!-- runtime data -->
-    <file src="$DistDir$\openalpr.conf" target="build\openalpr.conf"  />
-    <file src="$DistDir$\runtime_data\**\*.*" target="build\native\windows\$Platform$\runtime_data" />	
+    <file src="$DistDir$\openalpr.conf" target="build\configuration"  />
+    <file src="$DistDir$\runtime_data\**\*.*" target="build\configuration\runtime_data" />    
 
-	<!-- visual studio -->
+    <!-- visual studio -->
     <file src="openalpr.targets" target="build\OpenALPR.$PlatformToolset$.$Platform$.$Configuration$.targets"  />
- 		
+         
   </files>
 </package>

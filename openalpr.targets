@@ -1,12 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Target Name="OpenALPRCopyDependencies" BeforeTargets="AfterBuild">
+  <Target Name="OpenALPRTarget" BeforeTargets="AfterBuild">
+
+    <PropertyGroup>
+      <OpenALPRCopyBinariesDisabled Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($(DefineConstants), '^(.*;)*OPENALPR_DISABLE_COPY_BINARIES(;.*)*$'))">true</OpenALPRCopyBinariesDisabled>
+      <OpenALPRCopyRuntimeDataDisabled Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($(DefineConstants), '^(.*;)*OPENALPR_DISABLE_COPY_RUNTIME_DATA(;.*)*$'))">true</OpenALPRCopyRuntimeDataDisabled>
+      <OpenALPRCopyConfigDisabled Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($(DefineConstants), '^(.*;)*OPENALPR_DISABLE_COPY_CONFIG(;.*)*$'))">true</OpenALPRCopyConfigDisabled>
+    </PropertyGroup>
+    
     <ItemGroup>
       <OpenALPRBinaries Include="$(MSBuildThisFileDirectory)\native\windows\$(Platform)\**\*.*" />
-      <OpenALPRConfig Include="$(MSBuildThisFileDirectory)\openalpr.conf" />
+      <OpenALPRRuntimeData Include="$(MSBuildThisFileDirectory)\configuration\runtime_data\**\*.*" />
+      <OpenALPRConfig Include="$(MSBuildThisFileDirectory)\configuration\openalpr.conf" />
     </ItemGroup>
-    <Message Importance="high" Text="Copying OpenALPR dependencies from $(MSBuildThisFileDirectory)\native\windows\$(Platform) to $(TargetDir)" />
-    <Copy SourceFiles="@(OpenALPRCopyDependencies)" DestinationFiles="$(TargetDir)\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Copy SourceFiles="@(OpenALPRConfig)" DestinationFolder="$(TargetDir)" />
+	
+	<!-- OpenALPRBinaries -->
+	<Message Condition="$(OpenALPRCopyBinariesDisabled)!='true'" Importance="high" Text="Copying OpenALPR binaries to $(TargetDir)" />		
+	<Copy Condition="$(OpenALPRCopyBinariesDisabled)!='true'" SourceFiles="@(OpenALPRBinaries)" DestinationFiles="$(TargetDir)\%(RecursiveDir)%(Filename)%(Extension)" SkipUnchangedFiles="True" />
+	<Message Condition="$(OpenALPRCopyBinariesDisabled)=='true'" Importance="high" Text="Copying OpenALPR binaries is disabled by preprocessor condition" />				
+	
+	<!-- OpenALPRRuntimeData -->
+	<Message Condition="$(OpenALPRCopyRuntimeDataDisabled)!='true'" Importance="high" Text="Copying OpenALPR runtime data to $(TargetDir)" />
+	<Copy Condition="$(OpenALPRCopyRuntimeDataDisabled)!='true'" SourceFiles="@(OpenALPRRuntimeData)" DestinationFiles="$(TargetDir)\%(RecursiveDir)%(Filename)%(Extension)" SkipUnchangedFiles="True" />
+	<Message Condition="$(OpenALPRCopyRuntimeDataDisabled)=='true'" Importance="high" Text="Copying OpenALPR runtime data is disabled by preprocessor condition" />				
+
+	<!-- OpenALPRConfig -->
+	<Message Condition="$(OpenALPRCopyConfigDisabled)!='true'" Importance="high" Text="Copying OpenALPR configuration to $(TargetDir)" />
+	<Copy Condition="$(OpenALPRCopyConfigDisabled)!='true'" SourceFiles="@(OpenALPRConfig)" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="True" />
+	<Message Condition="$(OpenALPRCopyConfigDisabled)=='true'" Importance="high" Text="Copying OpenALPR configuration is disabled by preprocessor condition" />				
+
   </Target>
- </Project>
+</Project>

@@ -708,6 +708,7 @@ switch($Target)
 
 		Build-OpenALPR
         Build-OpenALPRNet		
+		Nupkg-OpenALPRNet
 		
 		Copy-Build-Result-To $DistDir		
 	}

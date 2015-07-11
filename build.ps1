@@ -500,6 +500,7 @@ function Build-OpenCV
         "-DBUILD_PERF_TESTS=OFF",
         "-DBUILD_TESTS=OFF",
         "-DBUILD_EXAMPLES=OFF",
+		"-DWITH_OPENCL=OFF",
         "-DCMAKE_BUILD_TYPE=$Configuration",
         "-Wno-dev",
         "-G`"$CmakeGenerator`"",

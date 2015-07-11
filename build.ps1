@@ -59,7 +59,7 @@ $VXXCommonTools = $null
 $CmakeGenerator = $null
 
 # Dependencies version numbering
-$TesseractVersion = "303"
+$TesseractVersion = "304"
 $LeptonicaVersion = "170"
 $OpenCVVersion = "248"
 $OpenALPRVersionMajorMinorPatch = $OpenALPRVersion -replace '.', ''
@@ -410,7 +410,7 @@ function Set-AssemblyVersion {
         $version = $matches[0]
 
         $numberOfReplacements = 0
-        $newContent = [System.IO.File]::ReadLines($assemblyInfo) | ForEach-Object {
+        $newContent = Get-Content($assemblyInfo) | ForEach-Object {
             $line = $_
             
             if($line.StartsWith("[assembly: AssemblyInformationalVersionAttribute")) {
@@ -500,6 +500,7 @@ function Build-OpenCV
         "-DBUILD_PERF_TESTS=OFF",
         "-DBUILD_TESTS=OFF",
         "-DBUILD_EXAMPLES=OFF",
+		"-DWITH_OPENCL=OFF",
         "-DCMAKE_BUILD_TYPE=$Configuration",
         "-Wno-dev",
         "-G`"$CmakeGenerator`"",

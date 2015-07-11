@@ -410,7 +410,7 @@ function Set-AssemblyVersion {
         $version = $matches[0]
 
         $numberOfReplacements = 0
-        $newContent = [System.IO.File]::ReadLines($assemblyInfo) | ForEach-Object {
+        $newContent = Get-Content($assemblyInfo) | ForEach-Object {
             $line = $_
             
             if($line.StartsWith("[assembly: AssemblyInformationalVersionAttribute")) {

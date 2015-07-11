@@ -59,7 +59,7 @@ $VXXCommonTools = $null
 $CmakeGenerator = $null
 
 # Dependencies version numbering
-$TesseractVersion = "303"
+$TesseractVersion = "304"
 $LeptonicaVersion = "170"
 $OpenCVVersion = "248"
 $OpenALPRVersionMajorMinorPatch = $OpenALPRVersion -replace '.', ''

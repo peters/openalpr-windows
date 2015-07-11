@@ -1,7 +1,7 @@
 param(
     [Parameter(Position = 0, ValueFromPipeline = $true)] 
     [string] $OpenALPRVersion = "2.1.0",
-    [ValidateSet("Build", "Nupkg", "RebuildOpenALPRAndNupkg", "RebuildOpenALPRNetAndNupkg")]
+    [ValidateSet("Build", "Nupkg", "RebuildOpenALPRAndNupkg", "RebuildOpenALPRNetAndNupkg", "RebuildOpenALPR", "RebuildOpenALPRNet")]
     [Parameter(Position = 1, ValueFromPipeline = $true)] 
     [string] $Target = "Build",
     [Parameter(Position = 2, ValueFromPipeline = $true)]
@@ -569,6 +569,8 @@ function Build-OpenALPR
     Start-Process "cmake.exe" @(
         "--build `"$OpenALPROutputDir`" --config $Configuration"
     )	
+	
+	Copy-Build-Result-To $DistDir
 }
 
 function Nupkg-OpenALPRNet
@@ -630,8 +632,9 @@ function Build-OpenALPRNet
     }
     
     Copy-Sources
-    Build-Sources
-
+    Build-Sources	
+	
+	Copy-Build-Result-To $DistDir
 }
 
 function Copy-Build-Result-To
@@ -688,8 +691,6 @@ switch($Target)
         Build-OpenCV
         Build-OpenALPR
         Build-OpenALPRNet		
-
-		Copy-Build-Result-To $DistDir
     }
 	"Nupkg" {
 		if(-not (Test-Path $OpenALPRNetDirOutputDir)) {
@@ -697,6 +698,29 @@ switch($Target)
 			exit 0
 		}
 		Nupkg-OpenALPRNet
+	}
+	"RebuildOpenALPR" {
+		$RebuildOpenALPR = $true
+		
+		Set-PlatformToolset
+
+		Requires-Cmake
+		Requires-Msbuild
+		Requires-Cmake
+
+		Build-OpenALPR
+	}
+	"RebuildOpenALPRNet" {
+		$RebuildOpenALPR = $true
+		
+		Set-PlatformToolset
+
+		Requires-Cmake
+		Requires-Msbuild
+		Requires-Cmake
+
+		Build-OpenALPR
+		Build-OpenALPRNet	
 	}
 	"RebuildOpenALPRAndNupkg" {
 		$RebuildOpenALPR = $true
@@ -710,21 +734,18 @@ switch($Target)
 		Build-OpenALPR
         Build-OpenALPRNet		
 		Nupkg-OpenALPRNet
-		
-		Copy-Build-Result-To $DistDir		
 	}
 	"RebuildOpenALPRNetAndNupkg" {
+		$RebuildOpenALPR = $true
+
 		Set-PlatformToolset
 
 		Requires-Cmake
 		Requires-Msbuild
 		Requires-Cmake
-		
-		$RebuildOpenALPR = $true
+				
         Build-OpenALPRNet		
 		Nupkg-OpenALPRNet
-		
-		Copy-Build-Result-To $DistDir
 	}
 }
 

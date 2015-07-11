@@ -1,27 +1,16 @@
-From 8d1213384ff5977f9ebf4f25acfffc8ee708690e Mon Sep 17 00:00:00 2001
-From: Matt Hill <matthill@gmail.com>
-Date: Mon, 6 Jul 2015 23:05:40 -0400
-Subject: [PATCH 1/2] Added snprintf fix for VS2015
-
----
- ccutil/platform.h | 2 ++
- viewer/svutil.h   | 2 ++
- 2 files changed, 4 insertions(+)
-
 diff --git a/ccutil/platform.h b/ccutil/platform.h
-index 4f611df..70bc4a5 100644
+index b793ee1..0fcdb44 100644
 --- a/ccutil/platform.h
 +++ b/ccutil/platform.h
-@@ -28,7 +28,9 @@
+@@ -28,7 +28,7 @@
  #define ultoa _ultoa
  #endif  /* __GNUC__ */
  #define SIGNED
+-#if defined(_MSC_VER)
 +#if _MSC_VER < 1900
  #define snprintf _snprintf
-+#endif
  #if (_MSC_VER <= 1400)
  #define vsnprintf _vsnprintf
- #endif /* _WIN32 */
 diff --git a/viewer/svutil.h b/viewer/svutil.h
 index 0d600ed..12384c4 100644
 --- a/viewer/svutil.h
@@ -36,26 +25,16 @@ index 0d600ed..12384c4 100644
  #if (_MSC_VER <= 1400)
  #define vsnprintf _vsnprintf
  #endif
--- 
-1.9.5.msysgit.0
-
-
-From 9485c40128c62688fa4250a1310e9b0569c88809 Mon Sep 17 00:00:00 2001
-From: Matt Hill <matthill@gmail.com>
-Date: Mon, 6 Jul 2015 23:17:19 -0400
-Subject: [PATCH 2/2] Added 64-bit build option
-
----
- vs2010/libtesseract/libtesseract.vcxproj | 306 +++++++++++++++++++++++++++++
- vs2010/tesseract.sln                     |  32 ++-
- vs2010/tesseract/tesseract.vcxproj       | 323 +++++++++++++++++++++++++++++++
- 3 files changed, 660 insertions(+), 1 deletion(-)
-
 diff --git a/vs2010/libtesseract/libtesseract.vcxproj b/vs2010/libtesseract/libtesseract.vcxproj
-index 48e0e45..34a71ba 100644
+index 8292546..54d0594 100644
 --- a/vs2010/libtesseract/libtesseract.vcxproj
 +++ b/vs2010/libtesseract/libtesseract.vcxproj
-@@ -5,26 +5,50 @@
+@@ -1,30 +1,54 @@
+ ﻿<?xml version="1.0" encoding="utf-8"?>
+-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+   <ItemGroup Label="ProjectConfigurations">
+     <ProjectConfiguration Include="DLL_Debug|Win32">
        <Configuration>DLL_Debug</Configuration>
        <Platform>Win32</Platform>
      </ProjectConfiguration>
@@ -157,7 +136,7 @@ index 48e0e45..34a71ba 100644
    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
    <ImportGroup Label="ExtensionSettings">
    </ImportGroup>
-@@ -63,54 +111,103 @@
+@@ -63,26 +111,50 @@
      <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
      <Import Project="..\include\tesseract_versionnumbers.props" />
    </ImportGroup>
@@ -208,40 +187,27 @@ index 48e0e45..34a71ba 100644
    <PropertyGroup Label="UserMacros" />
    <PropertyGroup>
      <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-     <OutDir Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|Win32'">..\$(Configuration)\</OutDir>
-+    <OutDir Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|x64'">..\$(Configuration)\</OutDir>
-     <OutDir Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Debug|Win32'">..\$(Configuration)\</OutDir>
-+    <OutDir Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Debug|x64'">..\$(Configuration)\</OutDir>
+@@ -91,26 +163,39 @@
      <IntDir Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|Win32'">$(Configuration)\</IntDir>
-+    <IntDir Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|x64'">$(Configuration)\</IntDir>
      <IntDir Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Debug|Win32'">$(Configuration)\</IntDir>
-+    <IntDir Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Debug|x64'">$(Configuration)\</IntDir>
      <EnableManagedIncrementalBuild Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|Win32'">false</EnableManagedIncrementalBuild>
 +    <EnableManagedIncrementalBuild Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|x64'">false</EnableManagedIncrementalBuild>
      <EnableManagedIncrementalBuild Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Debug|Win32'">false</EnableManagedIncrementalBuild>
 +    <EnableManagedIncrementalBuild Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Debug|x64'">false</EnableManagedIncrementalBuild>
      <OutDir Condition="'$(Configuration)|$(Platform)'=='LIB_Release|Win32'">..\$(Configuration)\</OutDir>
-+    <OutDir Condition="'$(Configuration)|$(Platform)'=='LIB_Release|x64'">..\$(Configuration)\</OutDir>
      <OutDir Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Release|Win32'">..\$(Configuration)\</OutDir>
-+    <OutDir Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Release|x64'">..\$(Configuration)\</OutDir>
      <IntDir Condition="'$(Configuration)|$(Platform)'=='LIB_Release|Win32'">$(Configuration)\</IntDir>
-+    <IntDir Condition="'$(Configuration)|$(Platform)'=='LIB_Release|x64'">$(Configuration)\</IntDir>
      <IntDir Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Release|Win32'">$(Configuration)\</IntDir>
-+    <IntDir Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Release|x64'">$(Configuration)\</IntDir>
      <EnableManagedIncrementalBuild Condition="'$(Configuration)|$(Platform)'=='LIB_Release|Win32'">false</EnableManagedIncrementalBuild>
 +    <EnableManagedIncrementalBuild Condition="'$(Configuration)|$(Platform)'=='LIB_Release|x64'">false</EnableManagedIncrementalBuild>
      <EnableManagedIncrementalBuild Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Release|Win32'">false</EnableManagedIncrementalBuild>
 +    <EnableManagedIncrementalBuild Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Release|x64'">false</EnableManagedIncrementalBuild>
      <OutDir Condition="'$(Configuration)|$(Platform)'=='DLL_Release|Win32'">..\$(Configuration)\</OutDir>
-+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DLL_Release|x64'">..\$(Configuration)\</OutDir>
      <IntDir Condition="'$(Configuration)|$(Platform)'=='DLL_Release|Win32'">$(Configuration)\</IntDir>
-+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DLL_Release|x64'">$(Configuration)\</IntDir>
      <EnableManagedIncrementalBuild Condition="'$(Configuration)|$(Platform)'=='DLL_Release|Win32'">false</EnableManagedIncrementalBuild>
 +    <EnableManagedIncrementalBuild Condition="'$(Configuration)|$(Platform)'=='DLL_Release|x64'">false</EnableManagedIncrementalBuild>
      <OutDir Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|Win32'">..\$(Configuration)\</OutDir>
-+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|x64'">..\$(Configuration)\</OutDir>
      <IntDir Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|Win32'">$(Configuration)\</IntDir>
-+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|x64'">$(Configuration)\</IntDir>
      <EnableManagedIncrementalBuild Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|Win32'">false</EnableManagedIncrementalBuild>
 +    <EnableManagedIncrementalBuild Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|x64'">false</EnableManagedIncrementalBuild>
      <TargetName Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|Win32'">$(ProjectName)-static-debug</TargetName>
@@ -261,10 +227,23 @@ index 48e0e45..34a71ba 100644
    </PropertyGroup>
    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|Win32'">
      <CustomBuildStep>
-@@ -145,6 +242,39 @@ copy "$(TargetPath)" ..\..\..\lib
- </Command>
-     </PostBuildEvent>
-   </ItemDefinitionGroup>
+@@ -138,12 +223,39 @@
+     <Lib>
+       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+     </Lib>
+-    <PostBuildEvent>
+-      <Message>copy library to lib directory</Message>
+-      <Command>if not exist ..\..\..\lib md ..\..\..\lib
+-copy "$(TargetPath)" ..\..\..\lib
+-</Command>
+-    </PostBuildEvent>
++    <PreBuildEvent>
++      <Command>..\version.bat</Command>
++    </PreBuildEvent>
++    <PreBuildEvent>
++      <Message>GIT_REV</Message>
++    </PreBuildEvent>
++  </ItemDefinitionGroup>
 +  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|x64'">
 +    <CustomBuildStep>
 +      <Message>
@@ -291,20 +270,20 @@ index 48e0e45..34a71ba 100644
 +    <Lib>
 +      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
 +    </Lib>
-+    <PostBuildEvent>
-+      <Message>copy library to lib directory</Message>
-+      <Command>if not exist ..\..\..\lib md ..\..\..\lib
-+copy "$(TargetPath)" ..\..\..\lib
-+</Command>
-+    </PostBuildEvent>
+     <PreBuildEvent>
+       <Command>..\version.bat</Command>
+     </PreBuildEvent>
+@@ -177,12 +289,33 @@ copy "$(TargetPath)" ..\..\..\lib
+     <Lib>
+       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+     </Lib>
+-    <PostBuildEvent>
+-      <Message>copy library to lib directory</Message>
+-      <Command>if not exist ..\..\..\lib md ..\..\..\lib
+-copy "$(TargetPath)" ..\..\..\lib
+-</Command>
+-    </PostBuildEvent>
 +  </ItemDefinitionGroup>
-   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Debug|Win32'">
-     <CustomBuildStep>
-       <Message>
-@@ -178,6 +308,39 @@ copy "$(TargetPath)" ..\..\..\lib
- </Command>
-     </PostBuildEvent>
-   </ItemDefinitionGroup>
 +  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Debug|x64'">
 +    <CustomBuildStep>
 +      <Message>
@@ -331,20 +310,20 @@ index 48e0e45..34a71ba 100644
 +    <Lib>
 +      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
 +    </Lib>
-+    <PostBuildEvent>
-+      <Message>copy library to lib directory</Message>
-+      <Command>if not exist ..\..\..\lib md ..\..\..\lib
-+copy "$(TargetPath)" ..\..\..\lib
-+</Command>
-+    </PostBuildEvent>
-+  </ItemDefinitionGroup>
+   </ItemDefinitionGroup>
    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Release|Win32'">
      <CustomBuildStep>
-       <Message>
-@@ -211,6 +374,39 @@ copy "$(TargetPath)" ..\..\..\lib
- </Command>
-     </PostBuildEvent>
-   </ItemDefinitionGroup>
+@@ -210,12 +343,33 @@ copy "$(TargetPath)" ..\..\..\lib
+       <Name>
+       </Name>
+     </Lib>
+-    <PostBuildEvent>
+-      <Message>copy library to lib directory</Message>
+-      <Command>if not exist ..\..\..\lib md ..\..\..\lib
+-copy "$(TargetPath)" ..\..\..\lib
+-</Command>
+-    </PostBuildEvent>
++  </ItemDefinitionGroup>
 +  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Release|x64'">
 +    <CustomBuildStep>
 +      <Message>
@@ -371,20 +350,20 @@ index 48e0e45..34a71ba 100644
 +      <Name>
 +      </Name>
 +    </Lib>
-+    <PostBuildEvent>
-+      <Message>copy library to lib directory</Message>
-+      <Command>if not exist ..\..\..\lib md ..\..\..\lib
-+copy "$(TargetPath)" ..\..\..\lib
-+</Command>
-+    </PostBuildEvent>
-+  </ItemDefinitionGroup>
+   </ItemDefinitionGroup>
    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Release|Win32'">
      <CustomBuildStep>
-       <Message>
-@@ -244,6 +440,39 @@ copy "$(TargetPath)" ..\..\..\lib
- </Command>
-     </PostBuildEvent>
-   </ItemDefinitionGroup>
+@@ -243,12 +397,33 @@ copy "$(TargetPath)" ..\..\..\lib
+       <Name>
+       </Name>
+     </Lib>
+-    <PostBuildEvent>
+-      <Message>copy library to lib directory</Message>
+-      <Command>if not exist ..\..\..\lib md ..\..\..\lib
+-copy "$(TargetPath)" ..\..\..\lib
+-</Command>
+-    </PostBuildEvent>
++  </ItemDefinitionGroup>
 +  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Release|x64'">
 +    <CustomBuildStep>
 +      <Message>
@@ -411,20 +390,21 @@ index 48e0e45..34a71ba 100644
 +      <Name>
 +      </Name>
 +    </Lib>
-+    <PostBuildEvent>
-+      <Message>copy library to lib directory</Message>
-+      <Command>if not exist ..\..\..\lib md ..\..\..\lib
-+copy "$(TargetPath)" ..\..\..\lib
-+</Command>
-+    </PostBuildEvent>
-+  </ItemDefinitionGroup>
+   </ItemDefinitionGroup>
    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Release|Win32'">
      <CustomBuildStep>
-       <Message>
-@@ -283,6 +512,45 @@ copy "$(TargetDir)$(TargetName).lib" ..\..\..\lib
- </Command>
-     </PostBuildEvent>
-   </ItemDefinitionGroup>
+@@ -281,13 +456,38 @@ copy "$(TargetPath)" ..\..\..\lib
+       <OptimizeReferences>true</OptimizeReferences>
+       <EnableCOMDATFolding>true</EnableCOMDATFolding>
+     </Link>
+-    <PostBuildEvent>
+-      <Message>copy library to lib directory</Message>
+-      <Command>if not exist ..\..\..\lib md ..\..\..\lib
+-copy "$(TargetPath)" ..\..\..\lib
+-copy "$(TargetDir)$(TargetName).lib" ..\..\..\lib
+-</Command>
+-    </PostBuildEvent>
++  </ItemDefinitionGroup>
 +  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Release|x64'">
 +    <CustomBuildStep>
 +      <Message>
@@ -456,21 +436,21 @@ index 48e0e45..34a71ba 100644
 +      <OptimizeReferences>true</OptimizeReferences>
 +      <EnableCOMDATFolding>true</EnableCOMDATFolding>
 +    </Link>
-+    <PostBuildEvent>
-+      <Message>copy library to lib directory</Message>
-+      <Command>if not exist ..\..\..\lib md ..\..\..\lib
-+copy "$(TargetPath)" ..\..\..\lib
-+copy "$(TargetDir)$(TargetName).lib" ..\..\..\lib
-+</Command>
-+    </PostBuildEvent>
-+  </ItemDefinitionGroup>
+   </ItemDefinitionGroup>
    <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|Win32'">
      <CustomBuildStep>
-       <Message>
-@@ -321,6 +589,44 @@ copy "$(TargetDir)$(TargetName).lib" ..\..\..\lib
- </Command>
-     </PostBuildEvent>
-   </ItemDefinitionGroup>
+@@ -319,13 +519,37 @@ copy "$(TargetDir)$(TargetName).lib" ..\..\..\lib
+       <AdditionalLibraryDirectories>..\..\..\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+       <GenerateDebugInformation>true</GenerateDebugInformation>
+     </Link>
+-    <PostBuildEvent>
+-      <Message>copy library to lib directory</Message>
+-      <Command>if not exist ..\..\..\lib md ..\..\..\lib
+-copy "$(TargetPath)" ..\..\..\lib
+-copy "$(TargetDir)$(TargetName).lib" ..\..\..\lib
+-</Command>
+-    </PostBuildEvent>
++  </ItemDefinitionGroup>
 +  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|x64'">
 +    <CustomBuildStep>
 +      <Message>
@@ -501,576 +481,126 @@ index 48e0e45..34a71ba 100644
 +      <AdditionalLibraryDirectories>..\..\..\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
 +      <GenerateDebugInformation>true</GenerateDebugInformation>
 +    </Link>
-+    <PostBuildEvent>
-+      <Message>copy library to lib directory</Message>
-+      <Command>if not exist ..\..\..\lib md ..\..\..\lib
-+copy "$(TargetPath)" ..\..\..\lib
-+copy "$(TargetDir)$(TargetName).lib" ..\..\..\lib
-+</Command>
-+    </PostBuildEvent>
-+  </ItemDefinitionGroup>
+   </ItemDefinitionGroup>
    <ItemGroup>
      <ClCompile Include="..\..\ccmain\adaptions.cpp" />
-     <ClCompile Include="..\..\classify\adaptive.cpp" />
 diff --git a/vs2010/tesseract.sln b/vs2010/tesseract.sln
-index 32962b9..f4409ef 100644
+index 32962b9..378e221 100644
 --- a/vs2010/tesseract.sln
 +++ b/vs2010/tesseract.sln
-@@ -1,6 +1,6 @@
+@@ -1,46 +1,70 @@
  ﻿
- Microsoft Visual Studio Solution File, Format Version 11.00
+-Microsoft Visual Studio Solution File, Format Version 11.00
 -# Visual C++ Express 2010
-+# Visual Studio 2010
- Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtesseract304", "libtesseract\libtesseract.vcxproj", "{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}"
- EndProject
- Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tesseract", "tesseract\tesseract.vcxproj", "{C76996CB-C4CB-4D89-9F67-F605DF129618}"
-@@ -8,37 +8,67 @@ EndProject
- Global
- 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
- 		DLL_Debug|Win32 = DLL_Debug|Win32
+-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtesseract304", "libtesseract\libtesseract.vcxproj", "{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}"
+-EndProject
+-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tesseract", "tesseract\tesseract.vcxproj", "{C76996CB-C4CB-4D89-9F67-F605DF129618}"
+-EndProject
+-Global
+-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+-		DLL_Debug|Win32 = DLL_Debug|Win32
+-		DLL_Release|Win32 = DLL_Release|Win32
+-		LIB_Debug|Win32 = LIB_Debug|Win32
+-		LIB_OpenCL_Debug|Win32 = LIB_OpenCL_Debug|Win32
+-		LIB_OpenCL_Release|Win32 = LIB_OpenCL_Release|Win32
+-		LIB_Release|Win32 = LIB_Release|Win32
+-	EndGlobalSection
+-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+-		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.DLL_Debug|Win32.ActiveCfg = DLL_Debug|Win32
+-		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.DLL_Debug|Win32.Build.0 = DLL_Debug|Win32
+-		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.DLL_Release|Win32.ActiveCfg = DLL_Release|Win32
+-		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.DLL_Release|Win32.Build.0 = DLL_Release|Win32
+-		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_Debug|Win32.ActiveCfg = LIB_Debug|Win32
+-		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_Debug|Win32.Build.0 = LIB_Debug|Win32
+-		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_OpenCL_Debug|Win32.ActiveCfg = LIB_OpenCL_Debug|Win32
+-		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_OpenCL_Debug|Win32.Build.0 = LIB_OpenCL_Debug|Win32
+-		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_OpenCL_Release|Win32.ActiveCfg = LIB_OpenCL_Release|Win32
+-		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_OpenCL_Release|Win32.Build.0 = LIB_OpenCL_Release|Win32
+-		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_Release|Win32.ActiveCfg = LIB_Release|Win32
+-		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_Release|Win32.Build.0 = LIB_Release|Win32
+-		{C76996CB-C4CB-4D89-9F67-F605DF129618}.DLL_Debug|Win32.ActiveCfg = DLL_Debug|Win32
+-		{C76996CB-C4CB-4D89-9F67-F605DF129618}.DLL_Debug|Win32.Build.0 = DLL_Debug|Win32
+-		{C76996CB-C4CB-4D89-9F67-F605DF129618}.DLL_Release|Win32.ActiveCfg = DLL_Release|Win32
+-		{C76996CB-C4CB-4D89-9F67-F605DF129618}.DLL_Release|Win32.Build.0 = DLL_Release|Win32
+-		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_Debug|Win32.ActiveCfg = LIB_Debug|Win32
+-		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_Debug|Win32.Build.0 = LIB_Debug|Win32
+-		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_OpenCL_Debug|Win32.ActiveCfg = LIB_OpenCL_Debug|Win32
+-		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_OpenCL_Debug|Win32.Build.0 = LIB_OpenCL_Debug|Win32
+-		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_OpenCL_Release|Win32.ActiveCfg = LIB_OpenCL_Release|Win32
+-		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_OpenCL_Release|Win32.Build.0 = LIB_OpenCL_Release|Win32
+-		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_Release|Win32.ActiveCfg = LIB_Release|Win32
+-		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_Release|Win32.Build.0 = LIB_Release|Win32
+-	EndGlobalSection
+-	GlobalSection(SolutionProperties) = preSolution
+-		HideSolutionNode = FALSE
+-	EndGlobalSection
+-EndGlobal
++Microsoft Visual Studio Solution File, Format Version 11.00
++# Visual C++ Express 2010
++Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtesseract304", "libtesseract\libtesseract.vcxproj", "{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}"
++EndProject
++Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tesseract", "tesseract\tesseract.vcxproj", "{C76996CB-C4CB-4D89-9F67-F605DF129618}"
++EndProject
++Global
++	GlobalSection(SolutionConfigurationPlatforms) = preSolution
++		DLL_Debug|Win32 = DLL_Debug|Win32
 +		DLL_Debug|x64 = DLL_Debug|x64
- 		DLL_Release|Win32 = DLL_Release|Win32
++		DLL_Release|Win32 = DLL_Release|Win32
 +		DLL_Release|x64 = DLL_Release|x64
- 		LIB_Debug|Win32 = LIB_Debug|Win32
++		LIB_Debug|Win32 = LIB_Debug|Win32
 +		LIB_Debug|x64 = LIB_Debug|x64
- 		LIB_OpenCL_Debug|Win32 = LIB_OpenCL_Debug|Win32
++		LIB_OpenCL_Debug|Win32 = LIB_OpenCL_Debug|Win32
 +		LIB_OpenCL_Debug|x64 = LIB_OpenCL_Debug|x64
- 		LIB_OpenCL_Release|Win32 = LIB_OpenCL_Release|Win32
++		LIB_OpenCL_Release|Win32 = LIB_OpenCL_Release|Win32
 +		LIB_OpenCL_Release|x64 = LIB_OpenCL_Release|x64
- 		LIB_Release|Win32 = LIB_Release|Win32
++		LIB_Release|Win32 = LIB_Release|Win32
 +		LIB_Release|x64 = LIB_Release|x64
- 	EndGlobalSection
- 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
- 		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.DLL_Debug|Win32.ActiveCfg = DLL_Debug|Win32
- 		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.DLL_Debug|Win32.Build.0 = DLL_Debug|Win32
++	EndGlobalSection
++	GlobalSection(ProjectConfigurationPlatforms) = postSolution
++		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.DLL_Debug|Win32.ActiveCfg = DLL_Debug|Win32
++		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.DLL_Debug|Win32.Build.0 = DLL_Debug|Win32
 +		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.DLL_Debug|x64.ActiveCfg = DLL_Debug|x64
 +		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.DLL_Debug|x64.Build.0 = DLL_Debug|x64
- 		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.DLL_Release|Win32.ActiveCfg = DLL_Release|Win32
- 		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.DLL_Release|Win32.Build.0 = DLL_Release|Win32
++		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.DLL_Release|Win32.ActiveCfg = DLL_Release|Win32
++		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.DLL_Release|Win32.Build.0 = DLL_Release|Win32
 +		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.DLL_Release|x64.ActiveCfg = DLL_Release|x64
 +		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.DLL_Release|x64.Build.0 = DLL_Release|x64
- 		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_Debug|Win32.ActiveCfg = LIB_Debug|Win32
- 		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_Debug|Win32.Build.0 = LIB_Debug|Win32
++		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_Debug|Win32.ActiveCfg = LIB_Debug|Win32
++		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_Debug|Win32.Build.0 = LIB_Debug|Win32
 +		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_Debug|x64.ActiveCfg = LIB_Debug|x64
 +		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_Debug|x64.Build.0 = LIB_Debug|x64
- 		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_OpenCL_Debug|Win32.ActiveCfg = LIB_OpenCL_Debug|Win32
- 		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_OpenCL_Debug|Win32.Build.0 = LIB_OpenCL_Debug|Win32
++		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_OpenCL_Debug|Win32.ActiveCfg = LIB_OpenCL_Debug|Win32
++		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_OpenCL_Debug|Win32.Build.0 = LIB_OpenCL_Debug|Win32
 +		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_OpenCL_Debug|x64.ActiveCfg = LIB_OpenCL_Debug|x64
 +		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_OpenCL_Debug|x64.Build.0 = LIB_OpenCL_Debug|x64
- 		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_OpenCL_Release|Win32.ActiveCfg = LIB_OpenCL_Release|Win32
- 		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_OpenCL_Release|Win32.Build.0 = LIB_OpenCL_Release|Win32
++		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_OpenCL_Release|Win32.ActiveCfg = LIB_OpenCL_Release|Win32
++		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_OpenCL_Release|Win32.Build.0 = LIB_OpenCL_Release|Win32
 +		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_OpenCL_Release|x64.ActiveCfg = LIB_OpenCL_Release|x64
 +		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_OpenCL_Release|x64.Build.0 = LIB_OpenCL_Release|x64
- 		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_Release|Win32.ActiveCfg = LIB_Release|Win32
- 		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_Release|Win32.Build.0 = LIB_Release|Win32
++		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_Release|Win32.ActiveCfg = LIB_Release|Win32
++		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_Release|Win32.Build.0 = LIB_Release|Win32
 +		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_Release|x64.ActiveCfg = LIB_Release|x64
 +		{D14F28C7-0CAE-4C37-B174-40FDEFBD4FE0}.LIB_Release|x64.Build.0 = LIB_Release|x64
- 		{C76996CB-C4CB-4D89-9F67-F605DF129618}.DLL_Debug|Win32.ActiveCfg = DLL_Debug|Win32
- 		{C76996CB-C4CB-4D89-9F67-F605DF129618}.DLL_Debug|Win32.Build.0 = DLL_Debug|Win32
-+		{C76996CB-C4CB-4D89-9F67-F605DF129618}.DLL_Debug|x64.ActiveCfg = DLL_Debug|x64
-+		{C76996CB-C4CB-4D89-9F67-F605DF129618}.DLL_Debug|x64.Build.0 = DLL_Debug|x64
- 		{C76996CB-C4CB-4D89-9F67-F605DF129618}.DLL_Release|Win32.ActiveCfg = DLL_Release|Win32
- 		{C76996CB-C4CB-4D89-9F67-F605DF129618}.DLL_Release|Win32.Build.0 = DLL_Release|Win32
-+		{C76996CB-C4CB-4D89-9F67-F605DF129618}.DLL_Release|x64.ActiveCfg = DLL_Release|x64
-+		{C76996CB-C4CB-4D89-9F67-F605DF129618}.DLL_Release|x64.Build.0 = DLL_Release|x64
- 		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_Debug|Win32.ActiveCfg = LIB_Debug|Win32
- 		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_Debug|Win32.Build.0 = LIB_Debug|Win32
-+		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_Debug|x64.ActiveCfg = LIB_Debug|x64
-+		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_Debug|x64.Build.0 = LIB_Debug|x64
- 		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_OpenCL_Debug|Win32.ActiveCfg = LIB_OpenCL_Debug|Win32
- 		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_OpenCL_Debug|Win32.Build.0 = LIB_OpenCL_Debug|Win32
-+		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_OpenCL_Debug|x64.ActiveCfg = LIB_OpenCL_Debug|x64
-+		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_OpenCL_Debug|x64.Build.0 = LIB_OpenCL_Debug|x64
- 		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_OpenCL_Release|Win32.ActiveCfg = LIB_OpenCL_Release|Win32
- 		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_OpenCL_Release|Win32.Build.0 = LIB_OpenCL_Release|Win32
-+		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_OpenCL_Release|x64.ActiveCfg = LIB_OpenCL_Release|x64
-+		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_OpenCL_Release|x64.Build.0 = LIB_OpenCL_Release|x64
- 		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_Release|Win32.ActiveCfg = LIB_Release|Win32
- 		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_Release|Win32.Build.0 = LIB_Release|Win32
-+		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_Release|x64.ActiveCfg = LIB_Release|x64
-+		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_Release|x64.Build.0 = LIB_Release|x64
- 	EndGlobalSection
- 	GlobalSection(SolutionProperties) = preSolution
- 		HideSolutionNode = FALSE
-diff --git a/vs2010/tesseract/tesseract.vcxproj b/vs2010/tesseract/tesseract.vcxproj
-index 246d69a..be27064 100644
---- a/vs2010/tesseract/tesseract.vcxproj
-+++ b/vs2010/tesseract/tesseract.vcxproj
-@@ -5,26 +5,50 @@
-       <Configuration>DLL_Debug</Configuration>
-       <Platform>Win32</Platform>
-     </ProjectConfiguration>
-+    <ProjectConfiguration Include="DLL_Debug|x64">
-+      <Configuration>DLL_Debug</Configuration>
-+      <Platform>x64</Platform>
-+    </ProjectConfiguration>
-     <ProjectConfiguration Include="DLL_Release|Win32">
-       <Configuration>DLL_Release</Configuration>
-       <Platform>Win32</Platform>
-     </ProjectConfiguration>
-+    <ProjectConfiguration Include="DLL_Release|x64">
-+      <Configuration>DLL_Release</Configuration>
-+      <Platform>x64</Platform>
-+    </ProjectConfiguration>
-     <ProjectConfiguration Include="LIB_Debug|Win32">
-       <Configuration>LIB_Debug</Configuration>
-       <Platform>Win32</Platform>
-     </ProjectConfiguration>
-+    <ProjectConfiguration Include="LIB_Debug|x64">
-+      <Configuration>LIB_Debug</Configuration>
-+      <Platform>x64</Platform>
-+    </ProjectConfiguration>
-     <ProjectConfiguration Include="LIB_OpenCL_Debug|Win32">
-       <Configuration>LIB_OpenCL_Debug</Configuration>
-       <Platform>Win32</Platform>
-     </ProjectConfiguration>
-+    <ProjectConfiguration Include="LIB_OpenCL_Debug|x64">
-+      <Configuration>LIB_OpenCL_Debug</Configuration>
-+      <Platform>x64</Platform>
-+    </ProjectConfiguration>
-     <ProjectConfiguration Include="LIB_OpenCL_Release|Win32">
-       <Configuration>LIB_OpenCL_Release</Configuration>
-       <Platform>Win32</Platform>
-     </ProjectConfiguration>
-+    <ProjectConfiguration Include="LIB_OpenCL_Release|x64">
-+      <Configuration>LIB_OpenCL_Release</Configuration>
-+      <Platform>x64</Platform>
-+    </ProjectConfiguration>
-     <ProjectConfiguration Include="LIB_Release|Win32">
-       <Configuration>LIB_Release</Configuration>
-       <Platform>Win32</Platform>
-     </ProjectConfiguration>
-+    <ProjectConfiguration Include="LIB_Release|x64">
-+      <Configuration>LIB_Release</Configuration>
-+      <Platform>x64</Platform>
-+    </ProjectConfiguration>
-   </ItemGroup>
-   <PropertyGroup Label="Globals">
-     <ProjectGuid>{C76996CB-C4CB-4D89-9F67-F605DF129618}</ProjectGuid>
-@@ -35,26 +59,50 @@
-     <ConfigurationType>Application</ConfigurationType>
-     <CharacterSet>MultiByte</CharacterSet>
-   </PropertyGroup>
-+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|x64'" Label="Configuration">
-+    <ConfigurationType>Application</ConfigurationType>
-+    <CharacterSet>MultiByte</CharacterSet>
-+  </PropertyGroup>
-   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Release|Win32'" Label="Configuration">
-     <ConfigurationType>Application</ConfigurationType>
-     <CharacterSet>MultiByte</CharacterSet>
-   </PropertyGroup>
-+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Release|x64'" Label="Configuration">
-+    <ConfigurationType>Application</ConfigurationType>
-+    <CharacterSet>MultiByte</CharacterSet>
-+  </PropertyGroup>
-   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Release|Win32'" Label="Configuration">
-     <ConfigurationType>Application</ConfigurationType>
-     <CharacterSet>MultiByte</CharacterSet>
-   </PropertyGroup>
-+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Release|x64'" Label="Configuration">
-+    <ConfigurationType>Application</ConfigurationType>
-+    <CharacterSet>MultiByte</CharacterSet>
-+  </PropertyGroup>
-   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Release|Win32'" Label="Configuration">
-     <ConfigurationType>Application</ConfigurationType>
-     <CharacterSet>MultiByte</CharacterSet>
-   </PropertyGroup>
-+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Release|x64'" Label="Configuration">
-+    <ConfigurationType>Application</ConfigurationType>
-+    <CharacterSet>MultiByte</CharacterSet>
-+  </PropertyGroup>
-   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|Win32'" Label="Configuration">
-     <ConfigurationType>Application</ConfigurationType>
-     <CharacterSet>MultiByte</CharacterSet>
-   </PropertyGroup>
-+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|x64'" Label="Configuration">
-+    <ConfigurationType>Application</ConfigurationType>
-+    <CharacterSet>MultiByte</CharacterSet>
-+  </PropertyGroup>
-   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Debug|Win32'" Label="Configuration">
-     <ConfigurationType>Application</ConfigurationType>
-     <CharacterSet>MultiByte</CharacterSet>
-   </PropertyGroup>
-+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Debug|x64'" Label="Configuration">
-+    <ConfigurationType>Application</ConfigurationType>
-+    <CharacterSet>MultiByte</CharacterSet>
-+  </PropertyGroup>
-   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-   <ImportGroup Label="ExtensionSettings">
-   </ImportGroup>
-@@ -62,55 +110,105 @@
-     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-     <Import Project="..\include\tesseract_versionnumbers.props" />
-   </ImportGroup>
-+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|x64'" Label="PropertySheets">
-+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-+    <Import Project="..\include\tesseract_versionnumbers.props" />
-+  </ImportGroup>
-   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Release|Win32'" Label="PropertySheets">
-     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-     <Import Project="..\include\tesseract_versionnumbers.props" />
-   </ImportGroup>
-+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Release|x64'" Label="PropertySheets">
-+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-+    <Import Project="..\include\tesseract_versionnumbers.props" />
-+  </ImportGroup>
-   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Release|Win32'" Label="PropertySheets">
-     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-     <Import Project="..\include\tesseract_versionnumbers.props" />
-   </ImportGroup>
-+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Release|x64'" Label="PropertySheets">
-+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-+    <Import Project="..\include\tesseract_versionnumbers.props" />
-+  </ImportGroup>
-   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Release|Win32'" Label="PropertySheets">
-     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-     <Import Project="..\include\tesseract_versionnumbers.props" />
-   </ImportGroup>
-+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Release|x64'" Label="PropertySheets">
-+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-+    <Import Project="..\include\tesseract_versionnumbers.props" />
-+  </ImportGroup>
-   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|Win32'" Label="PropertySheets">
-     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-     <Import Project="..\include\tesseract_versionnumbers.props" />
-   </ImportGroup>
-+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|x64'" Label="PropertySheets">
-+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-+    <Import Project="..\include\tesseract_versionnumbers.props" />
-+  </ImportGroup>
-   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Debug|Win32'" Label="PropertySheets">
-     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-     <Import Project="..\include\tesseract_versionnumbers.props" />
-   </ImportGroup>
-+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Debug|x64'" Label="PropertySheets">
-+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-+    <Import Project="..\include\tesseract_versionnumbers.props" />
-+  </ImportGroup>
-   <PropertyGroup Label="UserMacros" />
-   <PropertyGroup>
-     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-     <OutDir Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|Win32'">..\$(Configuration)\</OutDir>
-+    <OutDir Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|x64'">..\$(Configuration)\</OutDir>
-     <OutDir Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Debug|Win32'">..\$(Configuration)\</OutDir>
-+    <OutDir Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Debug|x64'">..\$(Configuration)\</OutDir>
-     <IntDir Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|Win32'">$(Configuration)\</IntDir>
-+    <IntDir Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|x64'">$(Configuration)\</IntDir>
-     <IntDir Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Debug|Win32'">$(Configuration)\</IntDir>
-+    <IntDir Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Debug|x64'">$(Configuration)\</IntDir>
-     <EnableManagedIncrementalBuild Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|Win32'">false</EnableManagedIncrementalBuild>
-+    <EnableManagedIncrementalBuild Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|x64'">false</EnableManagedIncrementalBuild>
-     <EnableManagedIncrementalBuild Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Debug|Win32'">false</EnableManagedIncrementalBuild>
-+    <EnableManagedIncrementalBuild Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Debug|x64'">false</EnableManagedIncrementalBuild>
-     <OutDir Condition="'$(Configuration)|$(Platform)'=='LIB_Release|Win32'">..\$(Configuration)\</OutDir>
-+    <OutDir Condition="'$(Configuration)|$(Platform)'=='LIB_Release|x64'">..\$(Configuration)\</OutDir>
-     <OutDir Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Release|Win32'">..\$(Configuration)\</OutDir>
-+    <OutDir Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Release|x64'">..\$(Configuration)\</OutDir>
-     <IntDir Condition="'$(Configuration)|$(Platform)'=='LIB_Release|Win32'">$(Configuration)\</IntDir>
-+    <IntDir Condition="'$(Configuration)|$(Platform)'=='LIB_Release|x64'">$(Configuration)\</IntDir>
-     <IntDir Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Release|Win32'">$(Configuration)\</IntDir>
-+    <IntDir Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Release|x64'">$(Configuration)\</IntDir>
-     <EnableManagedIncrementalBuild Condition="'$(Configuration)|$(Platform)'=='LIB_Release|Win32'">false</EnableManagedIncrementalBuild>
-+    <EnableManagedIncrementalBuild Condition="'$(Configuration)|$(Platform)'=='LIB_Release|x64'">false</EnableManagedIncrementalBuild>
-     <EnableManagedIncrementalBuild Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Release|Win32'">false</EnableManagedIncrementalBuild>
-+    <EnableManagedIncrementalBuild Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Release|x64'">false</EnableManagedIncrementalBuild>
-     <OutDir Condition="'$(Configuration)|$(Platform)'=='DLL_Release|Win32'">..\$(Configuration)\</OutDir>
-+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DLL_Release|x64'">..\$(Configuration)\</OutDir>
-     <IntDir Condition="'$(Configuration)|$(Platform)'=='DLL_Release|Win32'">$(Configuration)\</IntDir>
-+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DLL_Release|x64'">$(Configuration)\</IntDir>
-     <EnableManagedIncrementalBuild Condition="'$(Configuration)|$(Platform)'=='DLL_Release|Win32'">false</EnableManagedIncrementalBuild>
-+    <EnableManagedIncrementalBuild Condition="'$(Configuration)|$(Platform)'=='DLL_Release|x64'">false</EnableManagedIncrementalBuild>
-     <OutDir Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|Win32'">..\$(Configuration)\</OutDir>
-+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|x64'">..\$(Configuration)\</OutDir>
-     <IntDir Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|Win32'">$(Configuration)\</IntDir>
-+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|x64'">$(Configuration)\</IntDir>
-     <EnableManagedIncrementalBuild Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|Win32'">false</EnableManagedIncrementalBuild>
-+    <EnableManagedIncrementalBuild Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|x64'">false</EnableManagedIncrementalBuild>
-     <TargetName Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|Win32'">$(ProjectName)d</TargetName>
-+    <TargetName Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|x64'">$(ProjectName)d</TargetName>
-     <TargetName Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Debug|Win32'">$(ProjectName)d</TargetName>
-+    <TargetName Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Debug|x64'">$(ProjectName)d</TargetName>
-     <TargetName Condition="'$(Configuration)|$(Platform)'=='DLL_Release|Win32'">$(ProjectName)-dll</TargetName>
-+    <TargetName Condition="'$(Configuration)|$(Platform)'=='DLL_Release|x64'">$(ProjectName)-dll</TargetName>
-     <TargetName Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|Win32'">$(ProjectName)-dlld</TargetName>
-+    <TargetName Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|x64'">$(ProjectName)-dlld</TargetName>
-     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|Win32'">false</GenerateManifest>
-+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|x64'">false</GenerateManifest>
-     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Debug|Win32'">false</GenerateManifest>
-+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Debug|x64'">false</GenerateManifest>
-     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|Win32'">false</GenerateManifest>
-+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|x64'">false</GenerateManifest>
-     <TargetName Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Release|Win32'">$(ProjectName)-opencl</TargetName>
-+    <TargetName Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Release|x64'">$(ProjectName)-opencl</TargetName>
-   </PropertyGroup>
-   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|Win32'">
-     <CustomBuildStep>
-@@ -154,6 +252,48 @@
-       </LinkTimeCodeGeneration>
-     </Link>
-   </ItemDefinitionGroup>
-+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Debug|x64'">
-+    <CustomBuildStep>
-+      <Message>
-+      </Message>
-+      <Command>
-+      </Command>
-+      <Outputs>%(Outputs)</Outputs>
-+    </CustomBuildStep>
-+    <ClCompile>
-+      <Optimization>Disabled</Optimization>
-+      <AdditionalIncludeDirectories>..\..\api;..\..\ccmain;..\..\ccutil;..\..\ccstruct;..\..\classify;..\..\cube;..\..\cutil;..\..\dict;..\..\image;..\..\neural_networks\runtime;..\..\textord;..\..\viewer;..\..\wordrec;.;..\..\..\include;..\..\..\include\leptonica;..\port;..\..\opencl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;USE_STD_NAMESPACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-+      <MinimalRebuild>false</MinimalRebuild>
-+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-+      <PrecompiledHeader>
-+      </PrecompiledHeader>
-+      <WarningLevel>Level3</WarningLevel>
-+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
-+      <CompileAs>Default</CompileAs>
-+      <DisableSpecificWarnings>4244;4305;4018;4267;4996;4800;4005;4355;4099;4566;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-+      <ShowIncludes>false</ShowIncludes>
-+      <WholeProgramOptimization>
-+      </WholeProgramOptimization>
-+    </ClCompile>
-+    <ResourceCompile>
-+      <PreprocessorDefinitions>MYVERSION=$(LIBTESS_VERSION_R);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-+    </ResourceCompile>
-+    <Link>
-+      <AdditionalDependencies>ws2_32.lib;user32.lib;zlib$(ZLIB_VERSION)-static-mtdll-debug.lib;libpng$(LIBPNG_VERSION)-static-mtdll-debug.lib;libjpeg$(LIBJPEG_VERSION)-static-mtdll-debug.lib;giflib$(GIFLIB_VERSION)-static-mtdll-debug.lib;libtiff$(LIBTIFF_VERSION)-static-mtdll-debug.lib;liblept$(LIBLEPT_VERSION)-static-mtdll-debug.lib</AdditionalDependencies>
-+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-+      <AdditionalLibraryDirectories>..\..\..\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-+      <GenerateDebugInformation>true</GenerateDebugInformation>
-+      <SubSystem>Console</SubSystem>
-+      <OptimizeReferences>
-+      </OptimizeReferences>
-+      <EnableCOMDATFolding>
-+      </EnableCOMDATFolding>
-+      <LinkTimeCodeGeneration>
-+      </LinkTimeCodeGeneration>
-+    </Link>
-+  </ItemDefinitionGroup>
-   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Debug|Win32'">
-     <CustomBuildStep>
-       <Message>
-@@ -196,6 +336,48 @@
-       </LinkTimeCodeGeneration>
-     </Link>
-   </ItemDefinitionGroup>
-+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Debug|x64'">
-+    <CustomBuildStep>
-+      <Message>
-+      </Message>
-+      <Command>
-+      </Command>
-+      <Outputs>%(Outputs)</Outputs>
-+    </CustomBuildStep>
-+    <ClCompile>
-+      <Optimization>Disabled</Optimization>
-+      <AdditionalIncludeDirectories>..\..\api;..\..\ccmain;..\..\ccutil;..\..\ccstruct;..\..\classify;..\..\cube;..\..\cutil;..\..\dict;..\..\image;..\..\neural_networks\runtime;..\..\textord;..\..\viewer;..\..\wordrec;.;..\..\..\include;..\..\..\include\leptonica;..\port;..\..\opencl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;USE_STD_NAMESPACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-+      <MinimalRebuild>false</MinimalRebuild>
-+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-+      <PrecompiledHeader>
-+      </PrecompiledHeader>
-+      <WarningLevel>Level3</WarningLevel>
-+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
-+      <CompileAs>Default</CompileAs>
-+      <DisableSpecificWarnings>4244;4305;4018;4267;4996;4800;4005;4355;4099;4566;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-+      <ShowIncludes>false</ShowIncludes>
-+      <WholeProgramOptimization>
-+      </WholeProgramOptimization>
-+    </ClCompile>
-+    <ResourceCompile>
-+      <PreprocessorDefinitions>MYVERSION=$(LIBTESS_VERSION_R);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-+    </ResourceCompile>
-+    <Link>
-+      <AdditionalDependencies>ws2_32.lib;user32.lib;OpenCL.lib;zlib$(ZLIB_VERSION)-static-mtdll-debug.lib;libpng$(LIBPNG_VERSION)-static-mtdll-debug.lib;libjpeg$(LIBJPEG_VERSION)-static-mtdll-debug.lib;giflib$(GIFLIB_VERSION)-static-mtdll-debug.lib;libtiff$(LIBTIFF_VERSION)-static-mtdll-debug.lib;liblept$(LIBLEPT_VERSION)-static-mtdll-debug.lib</AdditionalDependencies>
-+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-+      <AdditionalLibraryDirectories>$(AMDAPPSDKROOT)\lib\x86;$(INTELOCLSDKROOT)\lib\x86;..\..\..\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-+      <GenerateDebugInformation>true</GenerateDebugInformation>
-+      <SubSystem>Console</SubSystem>
-+      <OptimizeReferences>
-+      </OptimizeReferences>
-+      <EnableCOMDATFolding>
-+      </EnableCOMDATFolding>
-+      <LinkTimeCodeGeneration>
-+      </LinkTimeCodeGeneration>
-+    </Link>
-+  </ItemDefinitionGroup>
-   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Release|Win32'">
-     <CustomBuildStep>
-       <Message>
-@@ -231,6 +413,41 @@
-       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-     </Link>
-   </ItemDefinitionGroup>
-+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LIB_Release|x64'">
-+    <CustomBuildStep>
-+      <Message>
-+      </Message>
-+      <Command>
-+      </Command>
-+      <Outputs>%(Outputs)</Outputs>
-+    </CustomBuildStep>
-+    <ClCompile>
-+      <Optimization>Full</Optimization>
-+      <AdditionalIncludeDirectories>..\..\api;..\..\ccmain;..\..\ccutil;..\..\ccstruct;..\..\classify;..\..\cube;..\..\cutil;..\..\dict;..\..\image;..\..\neural_networks\runtime;..\..\textord;..\..\viewer;..\..\wordrec;.;..\..\..\include;..\..\..\include\leptonica;..\port;..\..\opencl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;USE_STD_NAMESPACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-+      <PrecompiledHeader>
-+      </PrecompiledHeader>
-+      <WarningLevel>Level3</WarningLevel>
-+      <DebugInformationFormat>
-+      </DebugInformationFormat>
-+      <CompileAs>Default</CompileAs>
-+      <DisableSpecificWarnings>4244;4305;4018;4267;4996;4800;4005;4355;4099;4566;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-+      <WholeProgramOptimization>true</WholeProgramOptimization>
-+    </ClCompile>
-+    <ResourceCompile>
-+      <PreprocessorDefinitions>MYVERSION=$(LIBTESS_VERSION_R);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-+    </ResourceCompile>
-+    <Link>
-+      <AdditionalDependencies>ws2_32.lib;user32.lib;zlib$(ZLIB_VERSION)-static-mtdll.lib;libpng$(LIBPNG_VERSION)-static-mtdll.lib;libjpeg$(LIBJPEG_VERSION)-static-mtdll.lib;giflib$(GIFLIB_VERSION)-static-mtdll.lib;libtiff$(LIBTIFF_VERSION)-static-mtdll.lib;liblept$(LIBLEPT_VERSION)-static-mtdll.lib</AdditionalDependencies>
-+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-+      <AdditionalLibraryDirectories>..\..\..\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-+      <SubSystem>Console</SubSystem>
-+      <OptimizeReferences>true</OptimizeReferences>
-+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-+    </Link>
-+  </ItemDefinitionGroup>
-   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Release|Win32'">
-     <CustomBuildStep>
-       <Message>
-@@ -266,6 +483,41 @@
-       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-     </Link>
-   </ItemDefinitionGroup>
-+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='LIB_OpenCL_Release|x64'">
-+    <CustomBuildStep>
-+      <Message>
-+      </Message>
-+      <Command>
-+      </Command>
-+      <Outputs>%(Outputs)</Outputs>
-+    </CustomBuildStep>
-+    <ClCompile>
-+      <Optimization>Full</Optimization>
-+      <AdditionalIncludeDirectories>$(AMDAPPSDKROOT)\include;$(INTELOCLSDKROOT)\include;..\..\api;..\..\ccmain;..\..\ccutil;..\..\ccstruct;..\..\classify;..\..\cube;..\..\cutil;..\..\dict;..\..\image;..\..\neural_networks\runtime;..\..\textord;..\..\viewer;..\..\wordrec;.;..\..\..\include;..\..\..\include\leptonica;..\port;..\..\opencl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-+      <PreprocessorDefinitions>USE_OPENCL;WIN32;_WINDOWS;NDEBUG;USE_STD_NAMESPACE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-+      <PrecompiledHeader>
-+      </PrecompiledHeader>
-+      <WarningLevel>Level3</WarningLevel>
-+      <DebugInformationFormat>
-+      </DebugInformationFormat>
-+      <CompileAs>Default</CompileAs>
-+      <DisableSpecificWarnings>4244;4305;4018;4267;4996;4800;4005;4355;4099;4566;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-+      <WholeProgramOptimization>true</WholeProgramOptimization>
-+    </ClCompile>
-+    <ResourceCompile>
-+      <PreprocessorDefinitions>MYVERSION=$(LIBTESS_VERSION_R);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-+    </ResourceCompile>
-+    <Link>
-+      <AdditionalDependencies>ws2_32.lib;user32.lib;OpenCL.lib;zlib$(ZLIB_VERSION)-static-mtdll.lib;libpng$(LIBPNG_VERSION)-static-mtdll.lib;libjpeg$(LIBJPEG_VERSION)-static-mtdll.lib;giflib$(GIFLIB_VERSION)-static-mtdll.lib;libtiff$(LIBTIFF_VERSION)-static-mtdll.lib;liblept$(LIBLEPT_VERSION)-static-mtdll.lib</AdditionalDependencies>
-+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-+      <AdditionalLibraryDirectories>..\..\..\lib;$(AMDAPPSDKROOT)\lib\x86;$(INTELOCLSDKROOT)\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-+      <SubSystem>Console</SubSystem>
-+      <OptimizeReferences>true</OptimizeReferences>
-+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-+    </Link>
-+  </ItemDefinitionGroup>
-   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Release|Win32'">
-     <CustomBuildStep>
-       <Message>
-@@ -303,6 +555,42 @@
-       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-     </Link>
-   </ItemDefinitionGroup>
-+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Release|x64'">
-+    <CustomBuildStep>
-+      <Message>
-+      </Message>
-+      <Command>
-+      </Command>
-+      <Outputs>%(Outputs)</Outputs>
-+    </CustomBuildStep>
-+    <ClCompile>
-+      <Optimization>Full</Optimization>
-+      <AdditionalIncludeDirectories>..\..\api;..\..\ccmain;..\..\ccutil;..\..\ccstruct;..\..\classify;..\..\cube;..\..\cutil;..\..\dict;..\..\image;..\..\neural_networks\runtime;..\..\textord;..\..\viewer;..\..\wordrec;.;..\..\..\include;..\..\..\include\leptonica;..\port;..\..\opencl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;USE_STD_NAMESPACE;TESS_IMPORTS;LIBLEPT_IMPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-+      <PrecompiledHeader>
-+      </PrecompiledHeader>
-+      <WarningLevel>Level3</WarningLevel>
-+      <DebugInformationFormat>
-+      </DebugInformationFormat>
-+      <CompileAs>Default</CompileAs>
-+      <DisableSpecificWarnings>4244;4305;4018;4267;4996;4800;4005;4355;4099;4566;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-+      <WholeProgramOptimization>true</WholeProgramOptimization>
-+    </ClCompile>
-+    <ResourceCompile>
-+      <PreprocessorDefinitions>MYVERSION=$(LIBTESS_VERSION_R);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-+    </ResourceCompile>
-+    <Link>
-+      <AdditionalDependencies>ws2_32.lib;user32.lib;liblept$(LIBLEPT_VERSION).lib</AdditionalDependencies>
-+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-+      <Version>$(LIBTESS_NUMBER)</Version>
-+      <AdditionalLibraryDirectories>..\..\..\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-+      <SubSystem>Console</SubSystem>
-+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-+      <OptimizeReferences>true</OptimizeReferences>
-+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-+    </Link>
-+  </ItemDefinitionGroup>
-   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|Win32'">
-     <CustomBuildStep>
-       <Message>
-@@ -339,6 +627,41 @@
-       <TargetMachine>MachineX86</TargetMachine>
-     </Link>
-   </ItemDefinitionGroup>
-+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DLL_Debug|x64'">
-+    <CustomBuildStep>
-+      <Message>
-+      </Message>
-+      <Command>
-+      </Command>
-+      <Outputs>%(Outputs)</Outputs>
-+    </CustomBuildStep>
-+    <ClCompile>
-+      <Optimization>Disabled</Optimization>
-+      <AdditionalIncludeDirectories>..\..\api;..\..\ccmain;..\..\ccutil;..\..\ccstruct;..\..\classify;..\..\cube;..\..\cutil;..\..\dict;..\..\image;..\..\neural_networks\runtime;..\..\textord;..\..\viewer;..\..\wordrec;.;..\..\..\include;..\..\..\include\leptonica;..\port;..\..\opencl;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;USE_STD_NAMESPACE;TESS_IMPORTS;LIBLEPT_IMPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-+      <MinimalRebuild>false</MinimalRebuild>
-+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-+      <PrecompiledHeader>
-+      </PrecompiledHeader>
-+      <WarningLevel>Level3</WarningLevel>
-+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
-+      <CompileAs>Default</CompileAs>
-+      <DisableSpecificWarnings>4244;4305;4018;4267;4996;4800;4005;4355;4099;4566;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-+      <ShowIncludes>false</ShowIncludes>
-+    </ClCompile>
-+    <ResourceCompile>
-+      <PreprocessorDefinitions>MYVERSION=$(LIBTESS_VERSION_R);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-+    </ResourceCompile>
-+    <Link>
-+      <AdditionalDependencies>ws2_32.lib;user32.lib;liblept$(LIBLEPT_VERSION)d.lib</AdditionalDependencies>
-+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-+      <Version>$(LIBLEPT_NUMBER)</Version>
-+      <AdditionalLibraryDirectories>..\..\..\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-+      <GenerateDebugInformation>true</GenerateDebugInformation>
-+      <SubSystem>Console</SubSystem>
-+    </Link>
-+  </ItemDefinitionGroup>
-   <ItemGroup>
-     <ClCompile Include="..\..\api\tesseractmain.cpp" />
-   </ItemGroup>
--- 
-1.9.5.msysgit.0
-
++		{C76996CB-C4CB-4D89-9F67-F605DF129618}.DLL_Debug|Win32.ActiveCfg = DLL_Debug|Win32
++		{C76996CB-C4CB-4D89-9F67-F605DF129618}.DLL_Debug|Win32.Build.0 = DLL_Debug|Win32
++		{C76996CB-C4CB-4D89-9F67-F605DF129618}.DLL_Debug|x64.ActiveCfg = DLL_Debug|Win32
++		{C76996CB-C4CB-4D89-9F67-F605DF129618}.DLL_Release|Win32.ActiveCfg = DLL_Release|Win32
++		{C76996CB-C4CB-4D89-9F67-F605DF129618}.DLL_Release|Win32.Build.0 = DLL_Release|Win32
++		{C76996CB-C4CB-4D89-9F67-F605DF129618}.DLL_Release|x64.ActiveCfg = DLL_Release|Win32
++		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_Debug|Win32.ActiveCfg = LIB_Debug|Win32
++		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_Debug|Win32.Build.0 = LIB_Debug|Win32
++		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_Debug|x64.ActiveCfg = LIB_Debug|Win32
++		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_OpenCL_Debug|Win32.ActiveCfg = LIB_OpenCL_Debug|Win32
++		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_OpenCL_Debug|Win32.Build.0 = LIB_OpenCL_Debug|Win32
++		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_OpenCL_Debug|x64.ActiveCfg = LIB_OpenCL_Debug|Win32
++		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_OpenCL_Release|Win32.ActiveCfg = LIB_OpenCL_Release|Win32
++		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_OpenCL_Release|Win32.Build.0 = LIB_OpenCL_Release|Win32
++		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_OpenCL_Release|x64.ActiveCfg = LIB_OpenCL_Release|Win32
++		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_Release|Win32.ActiveCfg = LIB_Release|Win32
++		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_Release|Win32.Build.0 = LIB_Release|Win32
++		{C76996CB-C4CB-4D89-9F67-F605DF129618}.LIB_Release|x64.ActiveCfg = LIB_Release|Win32
++	EndGlobalSection
++	GlobalSection(SolutionProperties) = preSolution
++		HideSolutionNode = FALSE
++	EndGlobalSection
++EndGlobal

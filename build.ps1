@@ -1,7 +1,7 @@
 param(
     [Parameter(Position = 0, ValueFromPipeline = $true)] 
     [string] $OpenALPRVersion = "2.1.0",
-    [ValidateSet("Build", "Nupkg", "RebuildOpenALPRAndNupkg", "RebuildOpenALPRNetAndNupkg", "RebuildOpenALPR")]
+    [ValidateSet("Build", "Nupkg", "RebuildOpenALPRAndNupkg", "RebuildOpenALPRNetAndNupkg", "RebuildOpenALPR", "RebuildOpenALPRNet")]
     [Parameter(Position = 1, ValueFromPipeline = $true)] 
     [string] $Target = "Build",
     [Parameter(Position = 2, ValueFromPipeline = $true)]
@@ -708,8 +708,18 @@ switch($Target)
 		Requires-Cmake
 
 		Build-OpenALPR
+	}
+	"RebuildOpenALPRNet" {
+		$RebuildOpenALPR = $true
+		
+		Set-PlatformToolset
 
-		Copy-Build-Result-To $DistDir
+		Requires-Cmake
+		Requires-Msbuild
+		Requires-Cmake
+
+		Build-OpenALPR
+		Build-OpenALPRNet	
 	}
 	"RebuildOpenALPRAndNupkg" {
 		$RebuildOpenALPR = $true

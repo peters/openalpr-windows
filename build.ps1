@@ -1,7 +1,7 @@
 param(
     [Parameter(Position = 0, ValueFromPipeline = $true)] 
     [string] $OpenALPRVersion = "2.1.0",
-    [ValidateSet("Build", "Nupkg", "RebuildOpenALPRAndNupkg", "RebuildOpenALPRNetAndNupkg", "RebuildOpenALPR", "RebuildOpenALPRNet")]
+    [ValidateSet("Build", "Nupkg", "RebuildOpenALPR", "RebuildOpenALPRNet", "RebuildOpenALPRThenNupkg", "RebuildOpenALPRNetThenNupkg")]
     [Parameter(Position = 1, ValueFromPipeline = $true)] 
     [string] $Target = "Build",
     [Parameter(Position = 2, ValueFromPipeline = $true)]
@@ -17,9 +17,7 @@ param(
     [Parameter(Position = 5, ValueFromPipeline = $true)]
     [string] $CudaGeneration = "None",
     [Parameter(Position = 6, ValueFromPipeline = $true)]
-    [string] $Clean = $false,
-	[Parameter(Position = 7, ValueFromPipeline = $true)]
-    [string] $RebuildOpenALPR = $false
+    [string] $Clean = $false
 )
 
 # Utilities
@@ -84,6 +82,10 @@ if($Configuration -eq "Debug") {
 }
 
 $OpenCVLibName = "{0}{1}" -f $OpenCVVersion, $DebugPrefix
+
+# Rebuilding
+$RebuildOpenALPR = $false
+$RebuildOpenALPRNet = $false
 
 ###########################################################################################
 
@@ -530,11 +532,6 @@ function Build-OpenALPR
 {
     Write-Diagnostic "OpenALPR: $Configuration, $Platform, $PlatformToolset"
     
-    if($RebuildOpenALPR -eq $false -and (Test-Path $OpenALPROutputDir)) {
-        Write-Output "OpenALPR: Already built, skipping."
-        return
-    }
-        
     $OpenALPR_WITH_GPU_DETECTOR = "OFF"
     if($CudaGeneration -ne "None") {
         $OpenALPR_WITH_GPU_DETECTOR = "ON"
@@ -563,13 +560,17 @@ function Build-OpenALPR
         "-H`"$OpenALPRDir\src`"",
         "-B`"$OpenALPROutputDir`""
     )
-    
+         
+    if($RebuildOpenALPR -ne $false) {
+        Remove-Item $OpenALPROutputDir -Include Cmake* -ErrorAction SilentlyContinue -Force -Recurse | Out-Null
+    }
+
     Start-Process "cmake.exe" $CmakeArguments
-   
+     
     Start-Process "cmake.exe" @(
         "--build `"$OpenALPROutputDir`" --config $Configuration"
     )	
-	
+		
 	Copy-Build-Result-To $DistDir
 }
 
@@ -599,7 +600,7 @@ function Build-OpenALPRNet
 {
     Write-Diagnostic "OpenALPRNet: $Configuration, $Platform, $PlatformToolset"
 
-    if($RebuildOpenALPR -eq $false -and (Test-Path $OpenALPRNetDirOutputDir)) {
+    if($RebuildOpenALPRNet -eq $false -and (Test-Path $OpenALPRNetDirOutputDir)) {
         Write-Output "OpenALPRNet: Already built, skipping."
         return
     }
@@ -671,80 +672,58 @@ function Copy-Build-Result-To
 
 }
 
+function Target-Build {
+	Set-PlatformToolset
+
+	Requires-Cmake
+	Requires-Msbuild
+	Requires-Cmake
+		
+	if($Clean -eq $true) {
+		Remove-Item -Recurse -Force $OutputDir | Out-Null 
+		Remove-Item -Recurse -Force $DistDir | Out-Null
+	}
+	
+	Build-Tesseract
+	Build-OpenCV
+	Build-OpenALPR
+	Build-OpenALPRNet	
+}
+
 $BuildTime = $StopWatch::StartNew()
 
 switch($Target) 
 {
     "Build" {		
-		Set-PlatformToolset
-
-		Requires-Cmake
-		Requires-Msbuild
-		Requires-Cmake
-			
-        if($Clean -eq $true) {
-            Remove-Item -Recurse -Force $OutputDir | Out-Null 
-            Remove-Item -Recurse -Force $DistDir | Out-Null
-        }
-		
-        Build-Tesseract
-        Build-OpenCV
-        Build-OpenALPR
-        Build-OpenALPRNet		
+		Target-Build		
     }
 	"Nupkg" {
-		if(-not (Test-Path $OpenALPRNetDirOutputDir)) {
-			Write-Error "Please run build command before attempting to create nuget package."
-			exit 0
-		}
+		$script:RebuildOpenALPRNet = $true
+
+		Target-Build	
 		Nupkg-OpenALPRNet
 	}
 	"RebuildOpenALPR" {
-		$RebuildOpenALPR = $true
+		$script:RebuildOpenALPR = $true
 		
-		Set-PlatformToolset
-
-		Requires-Cmake
-		Requires-Msbuild
-		Requires-Cmake
-
-		Build-OpenALPR
+		Target-Build
 	}
-	"RebuildOpenALPRNet" {
-		$RebuildOpenALPR = $true
-		
-		Set-PlatformToolset
+	"RebuildOpenALPRNet" {		
+		$script:RebuildOpenALPRNet = $true
 
-		Requires-Cmake
-		Requires-Msbuild
-		Requires-Cmake
-
-		Build-OpenALPR
-		Build-OpenALPRNet	
+		Target-Build
 	}
-	"RebuildOpenALPRAndNupkg" {
-		$RebuildOpenALPR = $true
+	"RebuildOpenALPRThenNupkg" {
+		$script:RebuildOpenALPR = $true
+		$script:RebuildOpenALPRNet = $true
 
-		Set-PlatformToolset
-
-		Requires-Cmake
-		Requires-Msbuild
-		Requires-Cmake
-
-		Build-OpenALPR
-        Build-OpenALPRNet		
+		Target-Build
 		Nupkg-OpenALPRNet
 	}
-	"RebuildOpenALPRNetAndNupkg" {
-		$RebuildOpenALPR = $true
+	"RebuildOpenALPRNetThenNupkg" {
+		$script:RebuildOpenALPRNet = $true
 
-		Set-PlatformToolset
-
-		Requires-Cmake
-		Requires-Msbuild
-		Requires-Cmake
-				
-        Build-OpenALPRNet		
+		Target-Build
 		Nupkg-OpenALPRNet
 	}
 }

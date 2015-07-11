@@ -569,6 +569,8 @@ function Build-OpenALPR
     Start-Process "cmake.exe" @(
         "--build `"$OpenALPROutputDir`" --config $Configuration"
     )	
+	
+	Copy-Build-Result-To $DistDir
 }
 
 function Nupkg-OpenALPRNet
@@ -630,8 +632,9 @@ function Build-OpenALPRNet
     }
     
     Copy-Sources
-    Build-Sources
-
+    Build-Sources	
+	
+	Copy-Build-Result-To $DistDir
 }
 
 function Copy-Build-Result-To
@@ -688,8 +691,6 @@ switch($Target)
         Build-OpenCV
         Build-OpenALPR
         Build-OpenALPRNet		
-
-		Copy-Build-Result-To $DistDir
     }
 	"Nupkg" {
 		if(-not (Test-Path $OpenALPRNetDirOutputDir)) {
@@ -733,8 +734,6 @@ switch($Target)
 		Build-OpenALPR
         Build-OpenALPRNet		
 		Nupkg-OpenALPRNet
-		
-		Copy-Build-Result-To $DistDir		
 	}
 	"RebuildOpenALPRNetAndNupkg" {
 		$RebuildOpenALPR = $true
@@ -747,8 +746,6 @@ switch($Target)
 				
         Build-OpenALPRNet		
 		Nupkg-OpenALPRNet
-		
-		Copy-Build-Result-To $DistDir
 	}
 }
 

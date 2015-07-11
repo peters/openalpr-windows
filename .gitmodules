@@ -4,5 +4,5 @@
 	ignore = dirty
 [submodule "tesseract-ocr/src"]
 	path = tesseract-ocr/src
-url=https://code.google.com/p/tesseract-ocr/
+url=https://github.com/tesseract-ocr/tesseract.git
 	ignore = dirty

@@ -5,7 +5,7 @@ Build [OpenALPR](https://github.com/openalpr/openalpr) on Windows. This reposito
 NB! If you want to enable CUDA-support for OpenCV add `-CudaGeneration <Kepler|Fermi>` when executing `build.ps1`
 
 ## Current version
-* [2.0.1](https://github.com/openalpr/openalpr/releases/tag/v2.1.0)
+* [2.1.0](https://github.com/openalpr/openalpr/releases/tag/v2.1.0)
 
 ## Need to build a older version?
 * `git tag -l`

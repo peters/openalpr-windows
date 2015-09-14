@@ -139,6 +139,12 @@ function Die
 
 }
 
+function Requires-Git {
+    if ((Get-Command "git.exe" -ErrorAction SilentlyContinue) -eq $null) {
+        Die "Missing git.exe"
+    }
+}
+
 function Requires-Cmake {
     if ((Get-Command "cmake.exe" -ErrorAction SilentlyContinue) -eq $null) {
         Die "Missing cmake.exe"
@@ -675,6 +681,7 @@ function Copy-Build-Result-To
 function Target-Build {
 	Set-PlatformToolset
 
+	Requires-Git
 	Requires-Cmake
 	Requires-Msbuild
 	Requires-Cmake

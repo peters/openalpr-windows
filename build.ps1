@@ -59,7 +59,7 @@ $CmakeGenerator = $null
 # Dependencies version numbering
 $TesseractVersion = "303"
 $LeptonicaVersion = "170"
-$OpenCVVersion = "248"
+$OpenCVVersion = "300"
 $OpenALPRVersionMajorMinorPatch = $OpenALPRVersion -replace '.', ''
 
 # Metrics
@@ -509,7 +509,7 @@ function Build-OpenCV
         "-DBUILD_PERF_TESTS=OFF",
         "-DBUILD_TESTS=OFF",
         "-DBUILD_EXAMPLES=OFF",
-		"-DWITH_OPENCL=OFF",
+		"-DWITH_OPENCL=ON",
         "-DCMAKE_BUILD_TYPE=$Configuration",
         "-Wno-dev",
         "-G`"$CmakeGenerator`"",

@@ -57,7 +57,7 @@ $VXXCommonTools = $null
 $CmakeGenerator = $null
 
 # Dependencies version numbering
-$TesseractVersion = "304"
+$TesseractVersion = "303"
 $LeptonicaVersion = "170"
 $OpenCVVersion = "248"
 $OpenALPRVersionMajorMinorPatch = $OpenALPRVersion -replace '.', ''
@@ -364,6 +364,7 @@ function Msbuild
     }
     
     Vcxproj-Nuke $Project "/rs:Project/rs:ItemDefinitionGroup/rs:PostBuildEvent"
+    Vcxproj-Set $Project  "/rs:Project/rs:PropertyGroup[@Label='Configuration']/rs:PlatformToolset" $PlatformToolset
     Vcxproj-Set $Project  "/rs:Project/@ToolsVersion" $ToolsVersion
 
     Start-Process $MsbuildExe $Arguments

@@ -509,6 +509,7 @@ function Build-OpenCV
         "-DBUILD_PERF_TESTS=OFF",
         "-DBUILD_TESTS=OFF",
         "-DBUILD_EXAMPLES=OFF",
+		"-DBUILD_opencv_world=ON",
 		"-DWITH_OPENCL=ON",
         "-DCMAKE_BUILD_TYPE=$Configuration",
         "-Wno-dev",

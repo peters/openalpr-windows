@@ -671,6 +671,7 @@ function Copy-Build-Result-To
     Copy-Item $OpenALPROutputDir\$Configuration\alpr.exe $DestinationDir | Out-Null	
     Copy-Item $OpenALPROutputDir\misc_utilities\$Configuration\*.* $DestinationDir | Out-Null	
     Copy-Item $OpenALPROutputDir\openalpr\$Configuration\openalpr.lib -Force $DestinationDir\openalpr.lib | Out-Null
+    Copy-Item $OpenALPROutputDir\openalpr\$Configuration\openalpr.dll -Force $DestinationDir\openalpr.dll | Out-Null
     Copy-Item $OpenALPROutputDir\openalpr\$Configuration\openalpr-static.lib -Force $DestinationDir\openalpr-static.lib | Out-Null
     Copy-Item $OpenALPROutputDir\video\$Configuration\video.lib -Force $DestinationDir\video.lib | Out-Null
     Copy-Item $OpenALPROutputDir\openalpr\support\$Configuration\support.lib -Force $DestinationDir\support.lib | Out-Null

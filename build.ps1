@@ -1,6 +1,6 @@
 param(
     [Parameter(Position = 0, ValueFromPipeline = $true)] 
-    [string] $OpenALPRVersion = "2.1.0",
+    [string] $OpenALPRVersion = "2.2.0",
     [ValidateSet("Build", "Nupkg", "RebuildOpenALPR", "RebuildOpenALPRNet", "RebuildOpenALPRThenNupkg", "RebuildOpenALPRNetThenNupkg")]
     [Parameter(Position = 1, ValueFromPipeline = $true)] 
     [string] $Target = "Build",
@@ -57,7 +57,7 @@ $VXXCommonTools = $null
 $CmakeGenerator = $null
 
 # Dependencies version numbering
-$TesseractVersion = "303"
+$TesseractVersion = "304"
 $LeptonicaVersion = "170"
 $OpenCVVersion = "300"
 $OpenALPRVersionMajorMinorPatch = $OpenALPRVersion -replace '.', ''

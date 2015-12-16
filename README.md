@@ -40,7 +40,7 @@ running the following command, `Set-ExecutionPolicy RemoteSigned`.
 * `.\build.ps1 -Configuration Release -Platform x64 -PlatformToolset v120 -CudaGeneration None`
 
 ## Build entire matrix for toolchains v100, v110, v120, v140 with CUDA support.
-* `.\build.all.ps1 -CudeGeneration All`
+* `.\build.all.ps1 -CudaGeneration All`
 
 ## OpenALPR dependencies
 

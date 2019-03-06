@@ -32,14 +32,16 @@ running the following command, `Set-ExecutionPolicy RemoteSigned`.
 * `git submodule update --init --recursive`
 * `cd windows`
 
-## Build a release build for x64 targeting toolchain v120
+## Build via Windws Power Shell
+
+### Build a release build for x64 targeting toolchain v120
 * `.\build.ps1 -Configuration Release -Platform x64 -PlatformToolset v120 -CudaGeneration None`
 
-## Build a debug/release build for x64 targeting toolchain v120
+### Build a debug/release build for x64 targeting toolchain v120
 * `.\build.ps1 -Configuration Debug -Platform x64 -PlatformToolset v120 -CudaGeneration None`
 * `.\build.ps1 -Configuration Release -Platform x64 -PlatformToolset v120 -CudaGeneration None`
 
-## Build entire matrix for toolchains v100, v110, v120, v140 with CUDA support.
+### Build entire matrix for toolchains v100, v110, v120, v140 with CUDA support
 * `.\build.all.ps1 -CudeGeneration All`
 
 ## OpenALPR dependencies

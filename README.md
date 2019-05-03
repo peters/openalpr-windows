@@ -29,8 +29,8 @@ running the following command, `Set-ExecutionPolicy RemoteSigned`.
 * `git clone https://github.com/openalpr/openalpr.git`
 * `cd openalpr`
 * `git clone https://github.com/peters/openalpr-windows.git windows`
-* `git submodule update --init --recursive`
 * `cd windows`
+* `git submodule update --init --recursive`
 
 ## Build a release build for x64 targeting toolchain v120
 * `.\build.ps1 -Configuration Release -Platform x64 -PlatformToolset v120 -CudaGeneration None`

@@ -33,8 +33,8 @@ $PatchesDir = Join-Path $WorkingDir patches
 $OpenALPRDir = Join-Path $WorkingDir ..
 $OpenALPROutputDir = Join-Path $OutputDir openalpr
 
-$OpenALPRNetDir = Join-Path $OpenALPRDir src\bindings\csharp\openalpr-net
-$OpenALPRNetDirOutputDir = Join-Path $OutputDir openalpr-net
+$OpenALPRNetDir = Join-Path $OpenALPRDir src\bindings\csharp\alprnet
+$OpenALPRNetDirOutputDir = Join-Path $OutputDir alprnet
 
 $TesseractDir = Join-Path $WorkingDir tesseract-ocr
 $TesseractOutputDir = Join-Path $OutputDir tesseract
@@ -348,12 +348,15 @@ function Msbuild
         "/t:Rebuild",
         "/m", # Parallel build
         "/p:VisualStudioVersion=$VisualStudioVersion",
-        "/p:PlatformTarget=$ToolsVersion",
         "/p:PlatformToolset=$PlatformToolset",
         "/p:Platform=$Platform",
         "/p:PreferredToolArchitecture=$PreferredToolArchitecture",
         "/p:OutDir=`"$OutDir`""
     )
+	
+	if (-not $Project.EndsWith(".csproj")) {
+		$Arguments += @("/p:PlatformTarget=$ToolsVersion")
+	}
 
     $Arguments += $ExtraArguments
     
@@ -422,22 +425,19 @@ function Set-AssemblyVersion {
         $newContent = Get-Content($assemblyInfo) | ForEach-Object {
             $line = $_
             
-            if($line.StartsWith("[assembly: AssemblyInformationalVersionAttribute")) {
-                $line = "[assembly: AssemblyInformationalVersionAttribute(""$nugetVersion"")]"
+            if($line.StartsWith("[assembly: AssemblyFileVersion")) {
+                $line = "[assembly: AssemblyFileVersion(""$version"")]"
                 $numberOfReplacements++
-            } elseif($line.StartsWith("[assembly: AssemblyFileVersionAttribute")) {
-                $line = "[assembly: AssemblyFileVersionAttribute(""$version"")]"
-                $numberOfReplacements++
-            } elseif($line.StartsWith("[assembly: AssemblyVersionAttribute")) {
-                $line = "[assembly: AssemblyVersionAttribute(""$version"")]"
+            } elseif($line.StartsWith("[assembly: AssemblyVersion")) {
+                $line = "[assembly: AssemblyVersion(""$version"")]"
                 $numberOfReplacements++
             }
             
             $line		
         } 
 
-        if ($numberOfReplacements -ne 3) {
-            Die "Expected to replace the version number in 3 places in AssemblyInfo.cs (AssemblyInformationalVersionAttribute, AssemblyFileVersionAttribute, AssemblyVersionAttribute) but actually replaced it in $numberOfReplacements"
+        if ($numberOfReplacements -ne 2) {
+            Die "Expected to replace the version number in 2 places in AssemblyInfo.cs (AssemblyFileVersionAttribute, AssemblyVersionAttribute) but actually replaced it in $numberOfReplacements"
         }
 
         $newContent | Set-Content $assemblyInfo -Encoding UTF8
@@ -613,20 +613,14 @@ function Build-OpenALPRNet
         return
     }
 
-    $VcxProjectFilename = Join-Path $OpenALPRNetDirOutputDir openalpr-net.vcxproj
+    $VcxProjectFilename = Join-Path $OpenALPRNetDirOutputDir AlprNet.csproj
 
     function Copy-Sources
     {		
         Copy-Item $OpenALPRNetDir -Recurse -Force $OpenALPRNetDirOutputDir | Out-Null
 
-		# Set working directory
-		Vcxproj-Set $VcxProjectFilename '/rs:Project/rs:PropertyGroup[@Label="Globals"]/rs:OpenALPRWindowsDir' $WorkingDir
-
-        # Nuke <TargetPlatformVersion>
-        Vcxproj-Nuke $VcxProjectFilename "/rs:Project/rs:PropertyGroup/rs:TargetPlatformVersion"
-
         # Set assembly info
-        Set-AssemblyVersion $OpenALPRNetDirOutputDir\AssemblyInfo.cpp $OpenALPRVersion
+        Set-AssemblyVersion $OpenALPRNetDirOutputDir\Properties\AssemblyInfo.cs $OpenALPRVersion
     }
 
     function Build-Sources
@@ -637,7 +631,7 @@ function Build-OpenALPRNet
 			"/p:CudaGeneration=$CudaGeneration"
         )
 
-        Copy-Item -Force $OpenALPRNetDirOutputDir\$Configuration\openalpr-net.dll $DistDir | Out-Null
+        Copy-Item -Force $OpenALPRNetDirOutputDir\$Configuration\alprnet.dll $DistDir | Out-Null
     }
     
     Copy-Sources
@@ -675,9 +669,9 @@ function Copy-Build-Result-To
     Copy-Item $OpenALPROutputDir\openalpr\$Configuration\openalpr-static.lib -Force $DestinationDir\openalpr-static.lib | Out-Null
     Copy-Item $OpenALPROutputDir\video\$Configuration\video.lib -Force $DestinationDir\video.lib | Out-Null
     Copy-Item $OpenALPROutputDir\openalpr\support\$Configuration\support.lib -Force $DestinationDir\support.lib | Out-Null
-    Copy-Item $OpenALPROutputDir\statedetection\$Configuration\statedetection.lib -Force $DestinationDir\statedetection.lib | Out-Null
+    #Copy-Item $OpenALPROutputDir\statedetection\$Configuration\statedetection.lib -Force $DestinationDir\statedetection.lib | Out-Null
     Copy-Item $OpenALPRDir\runtime_data\ -Recurse -Force $DestinationDir\runtime_data\ | Out-Null
-    Copy-Item $OpenALPRDir\config\openalpr.conf.in -Force $DestinationDir\openalpr.conf | Out-Null
+    Copy-Item $OpenALPRDir\config\openalpr.conf.defaults -Force $DestinationDir\openalpr.conf | Out-Null
     (Get-Content $DestinationDir\openalpr.conf) -replace '^runtime_dir.*$', 'runtime_dir = runtime_data' | Out-File $DestinationDir\openalpr.conf -Encoding "ASCII" | Out-Null
 
 }
